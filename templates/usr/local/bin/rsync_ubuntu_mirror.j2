@@ -1,0 +1,94 @@
+#!/bin/bash
+# {{ ansible_managed }}
+#
+# usage:    This script is used to mirror the {{ item.name }} package repository.
+#
+
+tmp_path="{{ repo_mirror_tmp_path }}"
+base_path="{{ repo_mirror_base_path }}/{{ item.name }}"
+log_file="{{ repo_mirror_log_path }}/{{ item.name }}/repo_{{ item.name }}.log"
+status_file="{{ repo_mirror_base_path }}/{{ item.name }}.json"
+
+repo_source="{{ item.source_repo }}"
+
+datetime_format="{{ repo_mirror_datetime_format }}"
+bwlimit="{{ item.bwlimit | default(repo_mirror_bwlimit) }}"
+rsync_timeout="{{ item.rsync_timeout | default(repo_mirror_rsync_timeout) }}"
+
+lock="/tmp/sync_{{ item.name }}_mirror.lck"
+lastupdate_tmp=$(mktemp)
+rsyncexitcode="-1"
+
+
+function writestatistics() {
+    local syncsize="$(du -h "${base_path}" | tail -1 | cut -f1)"
+    local synctime="$(date "${datetime_format}")"
+
+    echo "{" > "${status_file}"
+    echo "\"size\": \"${syncsize}\"," >> "${status_file}"
+    echo "\"time\": \"${synctime}\"," >> "${status_file}"
+    echo "\"status\": \"${rsyncexitcode}\""  >> "${status_file}"
+    echo "}" >> "${status_file}"
+}
+
+function log-message() {
+    # usage: log <quit> <"message"> [exitcode]
+    # example: log-message 1 "Mirror is already up to date!" 0
+
+    local quit="$1"
+    local message="$2"
+
+    echo "[$(date "${datetime_format}")] ${message}" >> "${log_file}"
+    echo "---------------------------------------------------------------" >> "${log_file}"
+
+    if [ "${quit}" = 1 ]; then
+        local exitcode="$3"
+        writestatistics
+        exit ${exitcode}
+    fi
+}
+
+# create lock or exit if already locked in order to prevent multiple syncs
+exec 9>"${lock}"
+flock -n 9 || log-message 1 "{{ item.name }} mirror rsync job is already running!" 1
+
+# exit if there weren't any changes
+if diff -b <(curl -s "${lastupdate_url}") "${base_path}/project/trace/{{ repo_mirror_fqdn }}" >/dev/null; then
+    log-message 1 "Mirror is already up to date!" 0
+fi
+
+# start to rsync the mirror (stage 1)
+log-message 0 "Started stage 1 of {{ item.name }} mirror rsync job."
+rsync --verbose --log-file="${log_file}" --no-motd --human-readable --recursive \
+    --hard-links --links --safe-links --times --perms \
+    --delay-updates --temp-dir="${tmp_path}" \
+    --bwlimit="${bwlimit}" --timeout=120 --contimeout=60 \
+    --exclude "Packages*" --exclude "Sources*" \
+    --exclude "Release*" \
+    "${repo_source}" \
+    "${base_path}"
+rsyncexitcode="$?"
+
+if [ "${rsyncexitcode}" = "0" ]; then
+    log-message 0 "First stage of rsync done successfully."
+else
+    log-message 1 "rsync had an error while running the first stage." ${rsyncexitcode}
+fi
+
+# start to rsync the mirror (stage 2)
+log-message 0 "Started stage 2 of {{ item.name }} mirror rsync job."
+rsync --verbose --log-file="${log_file}" --no-motd --human-readable --recursive \
+    --hard-links --links --safe-links --times --perms \
+    --delete-after --temp-dir="${tmp_path}" \
+    --bwlimit="${bwlimit}" --timeout=120 --contimeout=60 \
+    "${repo_source}" \
+    "${base_path}"
+rsyncexitcode="$?"
+
+if [ "${rsyncexitcode}" = "0" ]; then
+    log-message 0 "Second stage of rsync done successfully."
+    date -u > ${base_path}/project/trace/$(hostname -f)
+    log-message 1 "Finished {{ item.name }} mirror rsync job." ${rsyncexitcode} # -> exit 0
+else
+    log-message 1 "First stage of rsync done successfully." ${rsyncexitcode}
+fi
