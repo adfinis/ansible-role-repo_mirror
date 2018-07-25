@@ -135,4 +135,3 @@ repo_mirror_repos: []
 #    cron_hour: '*/2'
 #    cron_minute: '41'
 #    cron_disabled: true # optional
-

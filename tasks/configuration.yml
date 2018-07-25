@@ -107,4 +107,3 @@
     - 'role::repo_mirror'
     - 'role::repo_mirror:configuration'
     - 'role::repo_mirror:configuration:fedora_report'
-
