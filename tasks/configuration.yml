@@ -44,6 +44,9 @@
   template:
     src: etc/logrotate.d/config.template.j2
     dest: '/etc/logrotate.d/{{ item.name }}'
+    owner: root
+    group: root
+    mode: 0744
   with_items: '{{ repo_mirror_repos }}'
   when: item is defined and item
   tags:

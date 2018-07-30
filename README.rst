@@ -1,5 +1,5 @@
 ================
-ROLE repo_mirror
+ROLE REPO MIRROR
 ================
 
 .. image:: https://img.shields.io/github/license/adfinis-sygroup/ansible-role-repo_mirror.svg?style=flat-square

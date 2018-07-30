@@ -30,108 +30,114 @@ repo_mirror_fedora_report_pass: '<password>'
 # A list of fedora projects to report. Default is an empty list.
 repo_mirror_fedora_reports: []
 
-#  - name: 'Fedora EPEL'
-#    enabled: false
-#    path: '/var/www/mirror/epel'
-#  - name: 'Fedora Linux'
-#    enabled: False
-#    path: '/var/www/mirror/fedora'
+# .. code-block:: YAML
+#
+#   repo_mirror_fedora_reports:
+#     - name: 'Fedora EPEL'
+#       enabled: false
+#       path: '/var/www/mirror/epel'
+#     - name: 'Fedora Linux'
+#       enabled: False
+#       path: '/var/www/mirror/fedora'
 
 # A list of repositories. Default is an empty list.
 # Below are some examples how to define a repository to mirror
 repo_mirror_repos: []
 
-#  - name: alpine
-#    type: rsync_single
-#    source_repo: rsync://rsync.alpinelinux.org/alpine/
-#    cron_hour: '*/2'
-#    cron_minute: '23'
-#    cron_disabled: true # optional
+# .. code-block:: YAML
 #
-#  - name: archlinux
-#    source_repo: rsync://mirror.23media.de/archlinux
-#    type: rsync_single
-#    cron_hour: '*'
-#    cron_minute: '*/10'
-#    cron_disabled: true # optional
+#   repo_mirror_fedora_reports:
+#     - name: alpine
+#       type: rsync_single
+#       source_repo: rsync://rsync.alpinelinux.org/alpine/
+#       cron_hour: '*/2'
+#       cron_minute: '23'
+#       cron_disabled: true # optional
 #
-#  - name: debian
-#    type: rsync_debian
-#    source_repo: 'ftp.ch.debian.org::debian'
-#    cron_hour: '*/2'
-#    cron_minute: '01'
-#    excludes:
-#    - alpha
-#    - arm
-#    - arm64
-#    - armel
-#    - armhf
-#    - hppa
-#    - hurd-i386
-#    - ia64
-#    - kfreebsd-amd64
-#    - kfreebsd-i386
-#    - m68k
-#    - mipsel
-#    - mips64el
-#    - mips
-#    - powerpc
-#    - ppc64el
-#    - s390
-#    - s390x
-#    - sh
-#    - sparc
-#    cron_disabled: true # optional
+#     - name: archlinux
+#       source_repo: rsync://mirror.23media.de/archlinux
+#       type: rsync_single
+#       cron_hour: '*'
+#       cron_minute: '*/10'
+#       cron_disabled: true # optional
 #
-#  - name: debian-security
-#    type: rsync_single
-#    source_repo: security.debian.org::debian-security
-#    cron_hour: '*/2'
-#    cron_minute: '13'
-#    cron_disabled: true # optional
+#     - name: debian
+#       type: rsync_debian
+#       source_repo: 'ftp.ch.debian.org::debian'
+#       cron_hour: '*/2'
+#       cron_minute: '01'
+#       excludes:
+#       - alpha
+#       - arm
+#       - arm64
+#       - armel
+#       - armhf
+#       - hppa
+#       - hurd-i386
+#       - ia64
+#       - kfreebsd-amd64
+#       - kfreebsd-i386
+#       - m68k
+#       - mipsel
+#       - mips64el
+#       - mips
+#       - powerpc
+#       - ppc64el
+#       - s390
+#       - s390x
+#       - sh
+#       - sparc
+#       cron_disabled: true # optional
 #
-#  - name: epel
-#    type: rsync_single
-#    source_repo: rsync://dl.fedoraproject.org/fedora-epel
-#    additional_report: '/usr/local/bin/report_mirror -c /etc/mirror/fedora_report.conf'
-#    cron_hour: '*'
-#    cron_minute: '58'
-#    cron_disabled: true # optional
+#     - name: debian-security
+#       type: rsync_single
+#       source_repo: security.debian.org::debian-security
+#       cron_hour: '*/2'
+#       cron_minute: '13'
+#       cron_disabled: true # optional
 #
-#  - name: centos
-#    type: rsync_single
-#    source_repo: eu-msync.centos.org::CentOS
-#    rsync_timeout: 300 # Optional, if for example .ISO files time out
-#    cron_hour: '*'
-#    cron_minute: '13'
-#    cron_disabled: true # optional
+#     - name: epel
+#       type: rsync_single
+#       source_repo: rsync://dl.fedoraproject.org/fedora-epel
+#       additional_report: '/usr/local/bin/report_mirror -c /etc/mirror/fedora_report.conf'
+#       cron_hour: '*'
+#       cron_minute: '58'
+#       cron_disabled: true # optional
 #
-#  - name: dotdeb
-#    type: rsync_single
-#    source_repo: packages.dotdeb.org::packages
-#    cron_hour: '*'
-#    cron_minute: '47'
-#    cron_disabled: true # optional
+#     - name: centos
+#       type: rsync_single
+#       source_repo: eu-msync.centos.org::CentOS
+#       rsync_timeout: 300 # Optional, if for example .ISO files time out
+#       cron_hour: '*'
+#       cron_minute: '13'
+#       cron_disabled: true # optional
 #
-#  - name: nodejs
-#    type: wget
-#    source_repo: 'https://deb.nodesource.com/node_7.x/'
-#    remotegpgkey: 'https://deb.nodesource.com/gpgkey/nodesource.gpg.key'
-#    bwlimit: 20000 # Optional, overwrite default
-#    cron_hour: '*/2'
-#    cron_minute: 24
-#    cron_disabled: true # optional
+#     - name: dotdeb
+#       type: rsync_single
+#       source_repo: packages.dotdeb.org::packages
+#       cron_hour: '*'
+#       cron_minute: '47'
+#       cron_disabled: true # optional
 #
-#  - name: opensuse
-#    type: rsync_single
-#    source_repo: stage.opensuse.org::opensuse-hotstuff-640gb
-#    cron_hour: '*'
-#    cron_minute: '07'
-#    cron_disabled: true # optional
+#     - name: nodejs
+#       type: wget
+#       source_repo: 'https://deb.nodesource.com/node_7.x/'
+#       remotegpgkey: 'https://deb.nodesource.com/gpgkey/nodesource.gpg.key'
+#       bwlimit: 20000 # Optional, overwrite default
+#       cron_hour: '*/2'
+#       cron_minute: 24
+#       cron_disabled: true # optional
 #
-#  - name: ubuntu
-#    type: rsync_ubuntu
-#    source_repo: rsync://ch.rsync.archive.ubuntu.com/ubuntu
-#    cron_hour: '*/2'
-#    cron_minute: '41'
-#    cron_disabled: true # optional
+#     - name: opensuse
+#       type: rsync_single
+#       source_repo: stage.opensuse.org::opensuse-hotstuff-640gb
+#       cron_hour: '*'
+#       cron_minute: '07'
+#       cron_disabled: true # optional
+#
+#     - name: ubuntu
+#       type: rsync_ubuntu
+#       source_repo: rsync://ch.rsync.archive.ubuntu.com/ubuntu
+#       cron_hour: '*/2'
+#       cron_minute: '41'
+#       cron_disabled: true # optional
