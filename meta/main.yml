@@ -3,6 +3,7 @@
 dependencies: []
 
 galaxy_info:
+  role_name: repo_mirror
   author: 'Adfinis SyGroup AG'
   description: 'Mirror a specified repository'
   company: 'Adfinis SyGroup AG'
