@@ -1,0 +1,76 @@
+#!/bin/bash
+# {{ ansible_managed }}
+#
+# usage:    This script is used to mirror the {{ item.name }} package repository.
+#
+
+tmp_path="{{ repo_mirror_tmp_path }}"
+base_path="{{ repo_mirror_base_path }}/{{ item.name }}"
+log_file="{{ repo_mirror_log_path }}/{{ item.name }}/repo_{{ item.name }}.log"
+status_file="{{ repo_mirror_base_path }}/{{ item.name }}.json"
+
+repo_source="{{ item.source_repo }}"
+
+datetime_format="{{ repo_mirror_datetime_format }}"
+bwlimit="{{ item.bwlimit | default(repo_mirror_bwlimit) }}"
+rsync_timeout="{{ item.rsync_timeout | default(repo_mirror_rsync_timeout) }}"
+
+lock="/tmp/sync_{{ item.name }}_mirror.lck"
+lastupdate_tmp=$(mktemp)
+exitcode="-1"
+
+remotegpgkey="{{ item.remotegpgkey }}"
+
+
+function writestatistics() {
+    local syncsize="$(du -h "${base_path}" | tail -1 | cut -f1)"
+    local synctime="$(date "${datetime_format}")"
+
+    echo "{" > "${status_file}"
+    echo "\"size\": \"${syncsize}\"," >> "${status_file}"
+    echo "\"time\": \"${synctime}\"," >> "${status_file}"
+    echo "\"status\": \"${exitcode}\""  >> "${status_file}"
+    echo "}" >> "${status_file}"
+}
+
+function log-message() {
+    # usage: log <quit> <"message"> [exitcode]
+    # example: log-message 1 "Mirror is already up to date!" 0
+
+    local quit="$1"
+    local message="$2"
+
+    echo "[$(date "${datetime_format}")] ${message}" >> "${log_file}"
+    echo "---------------------------------------------------------------" >> "${log_file}"
+
+    if [ "${quit}" = 1 ]; then
+        local exitcode="$3"
+        writestatistics
+        exit ${exitcode}
+    fi
+}
+
+# create lock or exit if already locked in order to prevent multiple syncs
+exec 9>"${lock}"
+flock -n 9 || log-message 1 "{{ item.name }} mirror rsync job is already running!" 1
+
+log-message 0 "Started {{ item.name }} mirror sync job."
+
+# Sync GPG Key
+wget -c ${remotegpgkey} --directory-prefix=${base_path}
+
+wget --mirror --no-parent --wait=1 --random-wait --no-host-directories \
+    --no-verbose -e robots=off --continue --limit-rate=${bwlimit} \
+    --exclude-directories="/node_7.x/conf,/node_7.x/db" \
+    --directory-prefix=${base_path} \
+    ${repo_source}
+exitcode="$?"
+
+# remove all html files so the sync will check for new files on next run
+find ${base_path} -name '*html' -exec rm {} \;
+
+if [ "${exitcode}" = "0" ]; then
+    log-message 1 "Finished {{ item.name }} mirror sync job." ${exitcode} # = 0
+else
+    log-message 1 "Sync job had an error: ${exitcode}" ${exitcode} # >= 1
+fi

@@ -1,0 +1,7 @@
+{{ repo_mirror_log_path }}/{{ item.name }}/repo_{{ item.name }} {
+  rotate 10
+  daily
+  compress
+  missingok
+  notifempty
+}

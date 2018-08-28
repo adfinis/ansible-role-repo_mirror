@@ -1,1 +1,40 @@
 ---
+
+- name: ensure script dependencies are installed
+  package:
+    name: '{{ repo_mirror_packages }}'
+    state: present
+  tags:
+    - 'role::repo_mirror'
+    - 'role::repo_mirror:installation'
+
+- name: ensure mirror group is present
+  group:
+    name: '{{ repo_mirror_group }}'
+    state: present
+  tags:
+    - 'role::repo_mirror'
+    - 'role::repo_mirror:installation'
+
+- name: ensure mirror user is present
+  user:
+    name: '{{ repo_mirror_user }}'
+    state: present
+  tags:
+    - 'role::repo_mirror'
+    - 'role::repo_mirror:installation'
+
+- name: ensure directory is present
+  file:
+    path: "{{ repo_mirror_base_path }}"
+    state: directory
+    mode: 0755
+    owner: "{{ repo_mirror_user }}"
+    group: "{{ repo_mirror_group }}"
+  tags:
+    - 'role::repo_mirror'
+    - 'role::repo_mirror:installation'
+  with_items:
+   - '{{ repo_mirror_base_path }}'
+   - '{{ repo_mirror_tmp_path }}'
+   - '{{ repo_mirror_log_path }}'

@@ -3,8 +3,9 @@
 dependencies: []
 
 galaxy_info:
+  role_name: repo_mirror
   author: 'Adfinis SyGroup AG'
-  description: ''
+  description: 'Mirror a specified repository'
   company: 'Adfinis SyGroup AG'
   license: 'GNU General Public License v3'
   min_ansible_version: '2.0.0'
@@ -18,8 +19,13 @@ galaxy_info:
       versions:
         - trusty
         - xenial
+        - bionic
     - name: EL
       versions:
         - 6
         - 7
-  galaxy_tags: []
+  galaxy_tags:
+    - repository
+    - mirror
+    - rsync
+    - wget

@@ -1,0 +1,132 @@
+#!/bin/bash
+# {{ ansible_managed }}
+#
+# usage:    This script is used to mirror the {{ item.name }} package repository.
+#
+
+# uncomment to enable bash debugging
+#set -x
+
+tmp_path="{{ repo_mirror_tmp_path }}"
+base_path="{{ repo_mirror_base_path }}/{{ item.name }}"
+log_file="{{ repo_mirror_log_path }}/{{ item.name }}/repo_{{ item.name }}.log"
+status_file="{{ repo_mirror_base_path }}/{{ item.name }}.json"
+
+repo_source="{{ item.source_repo }}"
+
+datetime_format="{{ repo_mirror_datetime_format }}"
+bwlimit="{{ item.bwlimit | default(repo_mirror_bwlimit) }}"
+rsync_timeout="{{ item.rsync_timeout | default(repo_mirror_rsync_timeout) }}"
+
+lock="/tmp/sync_{{ item.name }}_mirror.lck"
+lastupdate_tmp=$(mktemp)
+rsyncexitcode="-1"
+
+archexclude="{{ item.excludes | join(' ') | default("") }}"
+trace="project/trace/{{ repo_mirror_fqdn }}"
+
+# default rsync options
+rsync_opts="--bwlimit=${bwlimit} --timeout=600 --verbose --log-file="${log_file}" --no-motd --human-readable --recursive --hard-links --links --safe-links --times --delay-updates --temp-dir="${tmp_path}""
+stage1_rsync_opts="--exclude=Packages* --exclude=Sources* --exclude=Release* --exclude=InRelease --exclude=i18n/* --exclude=ls-lR*"
+stage2_rsync_opts="--max-delete=40000 --delay-updates --delete --delete-excluded"
+
+function writestatistics() {
+    local syncsize="$(du -h "${base_path}" | tail -1 | cut -f1)"
+    local synctime="$(date "${datetime_format}")"
+
+    echo "{" > "${status_file}"
+    echo "\"size\": \"${syncsize}\"," >> "${status_file}"
+    echo "\"time\": \"${synctime}\"," >> "${status_file}"
+    echo "\"status\": \"${rsyncexitcode}\""  >> "${status_file}"
+    echo "}" >> "${status_file}"
+}
+
+function writetracefile() {
+    globalarchlist="source amd64 arm64 armel armhf hurd-i386 i386 ia64 kfreebsd-amd64 kfreebsd-i386 mips mipsel powerpc ppc64el s390 s390x sparc"
+    # set -x
+    aexclude="^${archexclude// /\$|^}$"
+    archlist=""
+
+    for arch in ${globalarchlist}; do
+        if ! [[ ${arch} =~ ${aexclude} ]]; then
+            archlist="${archlist} ${arch}"
+        fi
+    done
+
+    echo "$(date -u)" >> ${base_path}/${trace}.new
+    echo "Used SySync v1" >> ${base_path}/${trace}.new
+    echo "Running on host: ${mirrorname}" >> ${base_path}/${trace}.new
+    echo "Architectures: GUESSED:{${archlist}}" >> ${base_path}/${trace}.new
+    echo "Upstream-mirror: ${repo_source}" >> ${base_path}/${trace}.new
+
+    mv "${base_path}/${trace}.new" "${base_path}/${trace}"
+
+}
+
+function log-message() {
+    # usage: log <quit> <"message"> [exitcode]
+    # example: log-message 1 "Mirror is already up to date!" 0
+
+    local quit="$1"
+    local message="$2"
+
+    echo "[$(date "${datetime_format}")] ${message}" >> "${log_file}"
+    echo "---------------------------------------------------------------" >> "${log_file}"
+
+    if [ "${quit}" = 1 ]; then
+        local exitcode="$3"
+        writestatistics
+        writetracefile
+        exit ${exitcode}
+    fi
+}
+
+# create lock or exit if already locked in order to prevent multiple syncs
+exec 9>"${lock}"
+flock -n 9 || log-message 1 "{{ item.name }} mirror rsync job is already running!" 1
+
+# The temp directory used by rsync --delay-updates is not
+# world-readable remotely. Always exclude it to avoid errors.
+exclude="${exclude} --exclude=.~tmp~/"
+
+sourceexclude=${sourceexclude:-""}
+archexclude=${archexclude:-""}
+
+# Generate rsync exlude list defined in $ARCH_EXCLUDE
+for ARCH in ${archexclude}; do
+    exclude="${exclude} --exclude=binary-${ARCH}/ --exclude=installer-${ARCH}/ --exclude=Contents-${ARCH}.gz --exclude=Contents-udeb-${ARCH}.gz --exclude=Contents-${ARCH}.diff/ --exclude=arch-${ARCH}.files --exclude=arch-${ARCH}.list.gz --exclude=*_${ARCH}.deb --exclude=*_${ARCH}.udeb --exclude=*_${ARCH}.changes"
+    if [ "${ARCH}" = "source" ]; then
+        if [ -z ${sourceexclude} ]; then
+            sourceexclude=" --exclude=source/ --exclude=*.tar.gz --exclude=*.diff.gz --exclude=*.tar.bz2 --exclude=*.tar.xz --exclude=*.diff.bz2 --exclude=*.dsc "
+        fi
+    fi
+done
+
+log-message 0 "Running stage 1 of {{ item.name }} rsync job"
+rsync ${rsync_opts} \
+    ${stage1_rsync_opts} \
+    ${exclude} ${sourceexclude}\
+    "${repo_source}" \
+    "${base_path}"
+rsyncexitcode="$?"
+
+if [ "${rsyncexitcode}" = "0" ]; then
+    log-message 0 "First stage of rsync done successfully."
+else
+    log-message 1 "rsync had an error while running the first stage." ${rsyncexitcode}
+fi
+
+log-message 0 "Running stage 2 of {{ item.name }} rsync job"
+rsync ${rsync_opts} \
+    ${stage2_rsync_opts} \
+    ${exclude} ${sourceexclude}\
+    "${repo_source}" \
+    "${base_path}"
+rsyncexitcode="$?"
+
+if [ "${rsyncexitcode}" = "0" ]; then
+    log-message 0 "Second stage of rsync done successfully."
+    log-message 1 "Finished {{ item.name }} mirror rsync job." ${rsyncexitcode} # -> exit 0
+else
+    log-message 1 "rsync had an error while running the second stage." ${rsyncexitcode}
+fi

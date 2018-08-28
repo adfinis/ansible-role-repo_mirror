@@ -1,15 +1,15 @@
-===============
-ROLE _TEMPLATE
-===============
+================
+ROLE REPO MIRROR
+================
 
-.. image:: https://img.shields.io/github/license/adfinis-sygroup/ansible-role-_template.svg?style=flat-square
-  :target: https://github.com/adfinis-sygroup/ansible-role-_template/blob/master/LICENSE
+.. image:: https://img.shields.io/github/license/adfinis-sygroup/ansible-role-repo_mirror.svg?style=flat-square
+  :target: https://github.com/adfinis-sygroup/ansible-role-repo_mirror/blob/master/LICENSE
 
-.. image:: https://img.shields.io/travis/adfinis-sygroup/ansible-role-_template.svg?style=flat-square
-  :target: https://github.com/adfinis-sygroup/ansible-role-_template
+.. image:: https://img.shields.io/travis/adfinis-sygroup/ansible-role-repo_mirror.svg?style=flat-square
+  :target: https://github.com/adfinis-sygroup/ansible-role-repo_mirror
 
-.. image:: https://img.shields.io/badge/galaxy-adfinis--sygroup._template-660198.svg?style=flat-square
-  :target: https://galaxy.ansible.com/adfinis-sygroup/_template
+.. image:: https://img.shields.io/badge/galaxy-adfinis--sygroup.repo_mirror-660198.svg?style=flat-square
+  :target: https://galaxy.ansible.com/adfinis-sygroup/repo_mirror
 
 A brief description of the role goes here.
 
@@ -50,19 +50,19 @@ passed in as parameters) is always nice for users too:
 
   - hosts: servers
     roles:
-       - { role: adfinis-sygroup._template }
+       - { role: adfinis-sygroup.repo_mirror }
 
 
 License
 ========
 
-`GPL-3.0 <https://github.com/adfinis-sygroup/ansible-role-_template/blob/master/LICENSE>`_
+`GPL-3.0 <https://github.com/adfinis-sygroup/ansible-role-repo_mirror/blob/master/LICENSE>`_
 
 
 Author Information
 ===================
 
-_template role was written by:
+repo_mirror role was written by:
 
 * Adfinis SyGroup AG | `Website <https://www.adfinis-sygroup.ch/>`_ | `Twitter <https://twitter.com/adfinissygroup>`_ | `GitHub <https://github.com/adfinis-sygroup>`_
 

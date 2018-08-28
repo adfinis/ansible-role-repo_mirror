@@ -1,1 +1,112 @@
 ---
+
+- name: create sync dirs
+  file:
+    path: "{{ repo_mirror_base_path }}/{{ item.name }}"
+    state: directory
+    mode: 0755
+    owner: '{{ item.user | default(repo_mirror_user) }}'
+    group: '{{ item.group | default(repo_mirror_group) }}'
+  with_items: "{{ repo_mirror_repos }}"
+  when: item is defined and item
+  tags:
+    - 'role::repo_mirror'
+    - 'role::repo_mirror:configuration'
+
+- name: create log dirs
+  file:
+    dest: "{{ repo_mirror_log_path }}/{{ item.name }}"
+    state: directory
+    mode: 0755
+    owner: '{{ item.user | default(repo_mirror_user) }}'
+    group: '{{ item.group | default(repo_mirror_group) }}'
+  with_items: "{{ repo_mirror_repos }}"
+  when: item is defined and item
+  tags:
+    - 'role::repo_mirror'
+    - 'role::repo_mirror:configuration'
+
+- name: create mirroring scripts
+  template:
+    src: "usr/local/bin/{{ item.type }}_mirror.j2"
+    dest: "/usr/local/bin/mirror_{{ item.name }}.sh"
+    owner: '{{ item.user | default(repo_mirror_user) }}'
+    group: root
+    mode: 0740
+  with_items: "{{ repo_mirror_repos }}"
+  when: item is defined and item
+  tags:
+    - 'role::repo_mirror'
+    - 'role::repo_mirror:configuration'
+    - 'role::repo_mirror:configuration:script'
+
+- name: create log rotation config
+  template:
+    src: etc/logrotate.d/config.template.j2
+    dest: '/etc/logrotate.d/{{ item.name }}'
+    owner: root
+    group: root
+    mode: 0744
+  with_items: '{{ repo_mirror_repos }}'
+  when: item is defined and item
+  tags:
+    - 'role::repo_mirror'
+    - 'role::repo_mirror:configuration'
+
+- name: create mirror cronjobs
+  cron:
+    name: "sync_{{ item.name }}_mirror"
+    cron_file: "sync_{{ item.name }}_mirror"
+    user: "{{ item.user | default(repo_mirror_user) }}"
+    hour: "{{ item.cron_hour | default('*/3') }}"
+    minute: "{{ item.cron_minute | default('30') }}"
+    day: "*"
+    weekday: "*"
+    month: "*"
+    job: "/usr/local/bin/mirror_{{ item.name }}.sh >/dev/null 2>&1 >/dev/null 2>&1"
+    state: present
+  with_items: '{{ repo_mirror_repos }}'
+  when: item is defined and item and item.cron_disabled is not defined
+  tags:
+    - 'role::repo_mirror'
+    - 'role::repo_mirror:configuration'
+    - 'role::repo_mirror:configuration:cronjob'
+
+- name: create fedora report script config dir
+  file:
+    path: /etc/mirror
+    owner: mirror
+    group: mirror
+    state: directory
+  when: repo_mirror_fedora_report and repo_mirror_fedora_reports is defined and repo_mirror_fedora_reports
+  tags:
+    - 'role::repo_mirror'
+    - 'role::repo_mirror:configuration'
+    - 'role::repo_mirror:configuration:fedora_report'
+
+
+- name: create fedora report script config
+  template:
+    src: templates/etc/mirror/fedora_report.conf.j2
+    dest: /etc/mirror/fedora_report.conf
+    owner: mirror
+    group: mirror
+    mode: 0640
+  when: repo_mirror_fedora_report and repo_mirror_fedora_reports is defined and repo_mirror_fedora_reports
+  tags:
+    - 'role::repo_mirror'
+    - 'role::repo_mirror:configuration'
+    - 'role::repo_mirror:configuration:fedora_report'
+
+- name: copy fedora report script
+  copy:
+    src: files/report_mirror
+    dest: /usr/local/bin/report_mirror
+    owner: mirror
+    group: mirror
+    mode: 0750
+  when: repo_mirror_fedora_report
+  tags:
+    - 'role::repo_mirror'
+    - 'role::repo_mirror:configuration'
+    - 'role::repo_mirror:configuration:fedora_report'
