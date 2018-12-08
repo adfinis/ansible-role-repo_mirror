@@ -53,6 +53,8 @@ repo_mirror_repos: []
 #       cron_hour: '*/2'
 #       cron_minute: '23'
 #       cron_disabled: true # optional
+#       excludes: # optional
+#        - v2.*   # ignore v2 versions
 #
 #     - name: archlinux
 #       source_repo: rsync://mirror.23media.de/archlinux
