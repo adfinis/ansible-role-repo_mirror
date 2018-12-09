@@ -10,6 +10,18 @@ log_file="{{ repo_mirror_log_path }}/{{ item.name }}/repo_{{ item.name }}.log"
 status_file="{{ repo_mirror_base_path }}/{{ item.name }}.json"
 
 repo_source="{{ item.source_repo }}"
+# compute exclude patterns
+exclude=""
+{% if item.excludes is defined %}
+exclude_pattern="{{ item.excludes | join(' ') | default("") }}"
+if [ -n "${exclude_pattern}" ]
+then
+    # Generate rsync exlude list
+    for excl in ${exclude_pattern}; do
+        exclude="${exclude} --exclude='${excl}'"
+    done
+fi
+{% endif %}
 
 datetime_format="{{ repo_mirror_datetime_format }}"
 bwlimit="{{ item.bwlimit | default(repo_mirror_bwlimit) }}"
@@ -59,12 +71,13 @@ fi
 
 # start to rsync the mirror (stage 1)
 log-message 0 "Started stage 1 of {{ item.name }} mirror rsync job."
-rsync --verbose --log-file="${log_file}" --no-motd --human-readable --recursive \
+eval rsync --verbose --log-file="${log_file}" --no-motd --human-readable --recursive \
     --hard-links --links --safe-links --times --perms \
     --delay-updates --temp-dir="${tmp_path}" \
     --bwlimit="${bwlimit}" --timeout=120 --contimeout=60 \
-    --exclude "Packages*" --exclude "Sources*" \
-    --exclude "Release*" \
+    --exclude 'Packages*' --exclude 'Sources*' \
+    --exclude 'Release*' \
+    "${exclude}" \
     "${repo_source}" \
     "${base_path}"
 rsyncexitcode="$?"
@@ -77,10 +90,11 @@ fi
 
 # start to rsync the mirror (stage 2)
 log-message 0 "Started stage 2 of {{ item.name }} mirror rsync job."
-rsync --verbose --log-file="${log_file}" --no-motd --human-readable --recursive \
+eval rsync --verbose --log-file="${log_file}" --no-motd --human-readable --recursive \
     --hard-links --links --safe-links --times --perms \
     --delete-after --temp-dir="${tmp_path}" \
     --bwlimit="${bwlimit}" --timeout=120 --contimeout=60 \
+    "${exclude}" \
     "${repo_source}" \
     "${base_path}"
 rsyncexitcode="$?"
