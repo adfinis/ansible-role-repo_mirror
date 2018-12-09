@@ -11,8 +11,9 @@ status_file="{{ repo_mirror_base_path }}/{{ item.name }}.json"
 
 repo_source="{{ item.source_repo }}"
 # compute exclude patterns
-exclude_pattern="{{ item.excludes | join(' ') | default("") }}"
 exclude=""
+{% if item.excludes is defined %}
+exclude_pattern="{{ item.excludes | join(' ') | default("") }}"
 if [ -n "${exclude_pattern}" ]
 then
     # Generate rsync exlude list
@@ -20,6 +21,7 @@ then
         exclude="${exclude} --exclude='${excl}'"
     done
 fi
+{% endif %}
 
 datetime_format="{{ repo_mirror_datetime_format }}"
 bwlimit="{{ item.bwlimit | default(repo_mirror_bwlimit) }}"
