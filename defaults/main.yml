@@ -19,6 +19,9 @@ repo_mirror_datetime_format: "+%Y/%m/%d %T %Z"
 # The default bandwith limit for syncing from remote
 repo_mirror_bwlimit: 30MiB
 
+# The default rsync timeout in seconds
+repo_mirror_rsync_timeout: 30
+
 # The FQDN of the mirror
 repo_mirror_fqdn: 'mirror.example.com'
 
