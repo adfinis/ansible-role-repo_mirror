@@ -24,9 +24,9 @@
     - 'role::repo_mirror'
     - 'role::repo_mirror:installation'
 
-- name: ensure directory is present
+- name: ensure mirror directories are present
   file:
-    path: "{{ repo_mirror_base_path }}"
+    path: "{{ item }}"
     state: directory
     mode: 0755
     owner: "{{ repo_mirror_user }}"
