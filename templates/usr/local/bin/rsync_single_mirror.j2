@@ -64,7 +64,7 @@ fi
 # start to rsync the mirror
 log-message 0 "Started {{ item.name }} mirror rsync job."
 rsync --verbose --log-file="${log}" --no-motd --human-readable --recursive \
-    --hard-links --links --safe-links --times \
+    --hard-links --links --safe-links --times --perms --chmod=u=rwX,go=rX \
     --delete-after --delay-updates --temp-dir="${tmp_path}" \
     --bwlimit="${bwlimit}" --timeout="${rsync_timeout}" --contimeout=60 \
     "${repo_source}" \

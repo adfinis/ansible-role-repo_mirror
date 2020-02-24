@@ -60,7 +60,7 @@ fi
 # start to rsync the mirror (stage 1)
 log-message 0 "Started stage 1 of {{ item.name }} mirror rsync job."
 rsync --verbose --log-file="${log_file}" --no-motd --human-readable --recursive \
-    --hard-links --links --safe-links --times --perms \
+    --hard-links --links --safe-links --times --perms --chmod=u=rwX,go=rX \
     --delay-updates --temp-dir="${tmp_path}" \
     --bwlimit="${bwlimit}" --timeout=120 --contimeout=60 \
     --exclude "Packages*" --exclude "Sources*" \
@@ -78,7 +78,7 @@ fi
 # start to rsync the mirror (stage 2)
 log-message 0 "Started stage 2 of {{ item.name }} mirror rsync job."
 rsync --verbose --log-file="${log_file}" --no-motd --human-readable --recursive \
-    --hard-links --links --safe-links --times --perms \
+    --hard-links --links --safe-links --times --perms --chmod=u=rwX,go=rX \
     --delete-after --temp-dir="${tmp_path}" \
     --bwlimit="${bwlimit}" --timeout=120 --contimeout=60 \
     "${repo_source}" \
