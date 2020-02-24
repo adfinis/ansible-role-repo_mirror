@@ -16,7 +16,6 @@ bwlimit="{{ item.bwlimit | default(repo_mirror_bwlimit) }}"
 rsync_timeout="{{ item.rsync_timeout | default(repo_mirror_rsync_timeout) }}"
 
 lock="/tmp/sync_{{ item.name }}_mirror.lck"
-lastupdate_tmp=$(mktemp)
 rsyncexitcode="-1"
 
 
@@ -51,11 +50,6 @@ function log-message() {
 # create lock or exit if already locked in order to prevent multiple syncs
 exec 9>"${lock}"
 flock -n 9 || log-message 1 "{{ item.name }} mirror rsync job is already running!" 1
-
-# exit if there weren't any changes
-if diff -b <(curl -s "${lastupdate_url}") "${base_path}/project/trace/{{ repo_mirror_fqdn }}" >/dev/null; then
-    log-message 1 "Mirror is already up to date!" 0
-fi
 
 # start to rsync the mirror (stage 1)
 log-message 0 "Started stage 1 of {{ item.name }} mirror rsync job."
