@@ -16,7 +16,6 @@ bwlimit="{{ item.bwlimit | default(repo_mirror_bwlimit) }}"
 rsync_timeout="{{ item.rsync_timeout | default(repo_mirror_rsync_timeout) }}"
 
 lock="/tmp/sync_{{ item.name }}_mirror.lck"
-lastupdate_tmp=$(mktemp)
 rsyncexitcode="-1"
 
 
@@ -52,15 +51,10 @@ function log-message() {
 exec 9>"${lock}"
 flock -n 9 || log-message 1 "{{ item.name }} mirror rsync job is already running!" 1
 
-# exit if there weren't any changes
-if diff -b <(curl -s "${lastupdate_url}") "${base_path}/project/trace/{{ repo_mirror_fqdn }}" >/dev/null; then
-    log-message 1 "Mirror is already up to date!" 0
-fi
-
 # start to rsync the mirror (stage 1)
 log-message 0 "Started stage 1 of {{ item.name }} mirror rsync job."
 rsync --verbose --log-file="${log_file}" --no-motd --human-readable --recursive \
-    --hard-links --links --safe-links --times --perms \
+    --hard-links --links --safe-links --times --perms --chmod=u=rwX,go=rX \
     --delay-updates --temp-dir="${tmp_path}" \
     --bwlimit="${bwlimit}" --timeout=120 --contimeout=60 \
     --exclude "Packages*" --exclude "Sources*" \
@@ -78,7 +72,7 @@ fi
 # start to rsync the mirror (stage 2)
 log-message 0 "Started stage 2 of {{ item.name }} mirror rsync job."
 rsync --verbose --log-file="${log_file}" --no-motd --human-readable --recursive \
-    --hard-links --links --safe-links --times --perms \
+    --hard-links --links --safe-links --times --perms --chmod=u=rwX,go=rX \
     --delete-after --temp-dir="${tmp_path}" \
     --bwlimit="${bwlimit}" --timeout=120 --contimeout=60 \
     "${repo_source}" \

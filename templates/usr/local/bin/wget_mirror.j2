@@ -16,7 +16,6 @@ bwlimit="{{ item.bwlimit | default(repo_mirror_bwlimit) }}"
 rsync_timeout="{{ item.rsync_timeout | default(repo_mirror_rsync_timeout) }}"
 
 lock="/tmp/sync_{{ item.name }}_mirror.lck"
-lastupdate_tmp=$(mktemp)
 exitcode="-1"
 
 remotegpgkey="{{ item.remotegpgkey }}"

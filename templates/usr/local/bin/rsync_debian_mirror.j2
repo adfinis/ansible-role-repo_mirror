@@ -19,14 +19,13 @@ bwlimit="{{ item.bwlimit | default(repo_mirror_bwlimit) }}"
 rsync_timeout="{{ item.rsync_timeout | default(repo_mirror_rsync_timeout) }}"
 
 lock="/tmp/sync_{{ item.name }}_mirror.lck"
-lastupdate_tmp=$(mktemp)
 rsyncexitcode="-1"
 
 archexclude="{{ item.excludes | join(' ') | default("") }}"
 trace="project/trace/{{ repo_mirror_fqdn }}"
 
 # default rsync options
-rsync_opts="--bwlimit=${bwlimit} --timeout=600 --verbose --log-file="${log_file}" --no-motd --human-readable --recursive --hard-links --links --safe-links --times --delay-updates --temp-dir="${tmp_path}""
+rsync_opts="--bwlimit=${bwlimit} --timeout=600 --verbose --log-file="${log_file}" --perms --chmod=u=rwX,go=rX --no-motd --human-readable --recursive --hard-links --links --safe-links --times --delay-updates --temp-dir="${tmp_path}""
 stage1_rsync_opts="--exclude=Packages* --exclude=Sources* --exclude=Release* --exclude=InRelease --exclude=i18n/* --exclude=ls-lR*"
 stage2_rsync_opts="--max-delete=40000 --delay-updates --delete --delete-excluded"
 
