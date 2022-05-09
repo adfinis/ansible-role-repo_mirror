@@ -12,6 +12,7 @@ tmp_path={{ repo_mirror_tmp_path | quote }}
 base_path={{ repo_mirror_base_path | quote }}/$repo_name
 log_file={{ repo_mirror_log_path | quote }}/$repo_name/repo_$repo_name.log
 status_file=$base_path.json
+owner={{ repo_mirror_user | quote }}
 
 repo_source={{ item.source_repo | quote }}
 
@@ -80,6 +81,17 @@ function log-message() {
         exit ${exitcode}
     fi
 }
+
+# Running as the incorrect user (probably root) could potentially create files
+# with the wrong ownership, leading to issues for later syncs:
+if ! username=$(id -un); then
+    echo 'Could not obtain user name.'
+    exit 1
+fi
+if [ "$username" != "$owner" ]; then
+    echo "Running as $username, but must run as $owner, otherwise this will break future syncs!"
+    exit 1
+fi
 
 # create lock or exit if already locked in order to prevent multiple syncs
 exec 9>"${lock}"
