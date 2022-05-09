@@ -7,22 +7,23 @@
 # uncomment to enable bash debugging
 #set -x
 
-tmp_path="{{ repo_mirror_tmp_path }}"
-base_path="{{ repo_mirror_base_path }}/{{ item.name }}"
-log_file="{{ repo_mirror_log_path }}/{{ item.name }}/repo_{{ item.name }}.log"
-status_file="{{ repo_mirror_base_path }}/{{ item.name }}.json"
+repo_name={{ item.name | quote }}
+tmp_path={{ repo_mirror_tmp_path | quote }}
+base_path={{ repo_mirror_base_path | quote }}/$repo_name
+log_file={{ repo_mirror_log_path | quote }}/$repo_name/repo_$repo_name.log
+status_file=$base_path.json
 
-repo_source="{{ item.source_repo }}"
+repo_source={{ item.source_repo | quote }}
 
-datetime_format="{{ repo_mirror_datetime_format }}"
-bwlimit="{{ item.bwlimit | default(repo_mirror_bwlimit) }}"
-rsync_timeout="{{ item.rsync_timeout | default(repo_mirror_rsync_timeout) }}"
+datetime_format={{ repo_mirror_datetime_format | quote }}
+bwlimit={{ item.bwlimit | default(repo_mirror_bwlimit) | quote }}
+rsync_timeout={{ item.rsync_timeout | default(repo_mirror_rsync_timeout) | quote }}
 
-lock="/tmp/sync_{{ item.name }}_mirror.lck"
-rsyncexitcode="-1"
+lock=/tmp/sync_${repo_name}_mirror.lck
+rsyncexitcode=-1
 
-archexclude="{{ item.excludes | join(' ') | default("") }}"
-trace="project/trace/{{ repo_mirror_fqdn }}"
+archexclude={{ item.excludes | join(" ") | default("") | quote }}
+trace=project/trace/{{ repo_mirror_fqdn | quote }}
 
 # default rsync options
 rsync_opts="--bwlimit=${bwlimit} --timeout=600 --verbose --log-file="${log_file}" --perms --chmod=u=rwX,go=rX --no-motd --human-readable --recursive --hard-links --links --safe-links --times --delay-updates --temp-dir="${tmp_path}""
@@ -82,7 +83,7 @@ function log-message() {
 
 # create lock or exit if already locked in order to prevent multiple syncs
 exec 9>"${lock}"
-flock -n 9 || log-message 1 "{{ item.name }} mirror rsync job is already running!" 1
+flock -n 9 || log-message 1 "$repo_name mirror rsync job is already running!" 1
 
 # The temp directory used by rsync --delay-updates is not
 # world-readable remotely. Always exclude it to avoid errors.
@@ -101,7 +102,7 @@ for ARCH in ${archexclude}; do
     fi
 done
 
-log-message 0 "Running stage 1 of {{ item.name }} rsync job"
+log-message 0 "Running stage 1 of $repo_name rsync job"
 rsync ${rsync_opts} \
     ${stage1_rsync_opts} \
     ${exclude} ${sourceexclude}\
@@ -115,7 +116,7 @@ else
     log-message 1 "rsync had an error while running the first stage." ${rsyncexitcode}
 fi
 
-log-message 0 "Running stage 2 of {{ item.name }} rsync job"
+log-message 0 "Running stage 2 of $repo_name rsync job"
 rsync ${rsync_opts} \
     ${stage2_rsync_opts} \
     ${exclude} ${sourceexclude}\
@@ -125,7 +126,7 @@ rsyncexitcode="$?"
 
 if [ "${rsyncexitcode}" = "0" ]; then
     log-message 0 "Second stage of rsync done successfully."
-    log-message 1 "Finished {{ item.name }} mirror rsync job." ${rsyncexitcode} # -> exit 0
+    log-message 1 "Finished $repo_name mirror rsync job." ${rsyncexitcode} # -> exit 0
 else
     log-message 1 "rsync had an error while running the second stage." ${rsyncexitcode}
 fi
