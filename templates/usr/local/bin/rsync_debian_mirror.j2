@@ -22,7 +22,7 @@ rsync_timeout={{ item.rsync_timeout | default(repo_mirror_rsync_timeout) | quote
 lock=/tmp/sync_${repo_name}_mirror.lck
 rsyncexitcode=-1
 
-archexclude={{ item.excludes | join(" ") | default("") | quote }}
+archexclude={{ item.excludes | default([]) | join(" ") | quote }}
 trace=project/trace/{{ repo_mirror_fqdn | quote }}
 
 # default rsync options
