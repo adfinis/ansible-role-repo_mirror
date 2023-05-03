@@ -53,24 +53,64 @@
     - 'role::repo_mirror'
     - 'role::repo_mirror:configuration'
 
-- name: create mirror cronjobs
-  cron:
-    name: "sync_{{ item.name }}_mirror"
-    cron_file: "sync_{{ item.name }}_mirror"
-    user: "{{ item.user | default(repo_mirror_user) }}"
-    hour: "{{ item.cron_hour | default('*/3') }}"
-    minute: "{{ item.cron_minute | default('30') }}"
-    day: "*"
-    weekday: "*"
-    month: "*"
-    job: "/usr/local/bin/mirror_{{ item.name }}.sh >/dev/null 2>&1 >/dev/null 2>&1"
-    state: present
-  with_items: '{{ repo_mirror_repos }}'
-  when: item is defined and item and item.cron_disabled is not defined
+- name: populate timer facts
+  timer_facts:
+
+- name: populate service facts
+  service_facts:
+
+- name: validate calendar format
+  ansible.builtin.command:
+    argv:
+      - "systemd-analyze"
+      - "calendar"
+      - "{{ repo_systemd_timer }}"
+  register: systemd_analyze_output
+  failed_when: systemd_analyze_output.rc != 0
+
+- name: Create mirror systemd units
+  include_role:
+    name: 0x0i.systemd
+  vars:
+    unit_config:
+      - name: "sync_{{ item.name }}_mirror"
+        type: service
+        Unit:
+          Description: "Systemd unit for mirror script of {{ item.name }}"
+        Service:
+          Type: simple
+          ExecStart: "/usr/local/bin/mirror_{{ item.name }}.sh"
+          KillMode: process
+          RuntimeMaxSec: "{{ max_backup_runtime * 3600 }}"
+  with_items: "{{ repo_mirror_repos }}"
+  when: item is defined and item and item.disabled is not defined
   tags:
     - 'role::repo_mirror'
     - 'role::repo_mirror:configuration'
-    - 'role::repo_mirror:configuration:cronjob'
+    - 'role::repo_mirror:configuration:timer'
+
+- name: Create mirror systemd timer units and enable
+  include_role:
+    name: 0x0i.systemd
+  vars:
+    unit_config:
+      - name: "sync_{{ item.name }}_mirror"
+        type: timer
+        Unit:
+          Description: "Systemd timer unit for mirror script of {{ item.name }}"
+        Timer:
+          OnCalendar: "{{ hostvars[item].backup_dirvish_timepoint }}"
+          Persistent: false
+        Install:
+          WantedBy: "timers.target"
+        enabled:  true
+        state: "started"
+  with_items: "{{ repo_mirror_repos }}"
+  when: item is defined
+  tags:
+    - 'role::repo_mirror'
+    - 'role::repo_mirror:configuration'
+    - 'role::repo_mirror:configuration:unit'
 
 - name: create fedora report script config dir
   file:
