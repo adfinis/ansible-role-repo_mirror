@@ -5,7 +5,7 @@ driver:
   name: podman
 platforms:
   - name: instance
-    image: quay.io/debian:bullseye
+    image: docker.io/debian:bullseye
     pre_build_image: true
 provisioner:
   name: ansible
