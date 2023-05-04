@@ -2,3 +2,6 @@
 
 roles:
 - src: jonaspammer.bootstrap
+
+collections:
+  - name: containers.podman
