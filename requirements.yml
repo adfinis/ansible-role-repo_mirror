@@ -1,7 +1,10 @@
 ---
 
 roles:
-- src: jonaspammer.bootstrap
+  - name: jonaspammer.bootstrap
+  - name: 0x0i.systemd
 
 collections:
-  - name: containers.podman
+  - containers.podman
+  - ansible.posix
+  - community.general
