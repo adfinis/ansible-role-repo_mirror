@@ -103,7 +103,7 @@
           Persistent: false
         Install:
           WantedBy: "timers.target"
-        enabled:  true
+        enabled: "{{ not item.systemd_timer_disabled }}"
         state: "started"
   with_items: "{{ repo_mirror_repos }}"
   when: item is defined
