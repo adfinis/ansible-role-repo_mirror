@@ -64,9 +64,14 @@
     argv:
       - "systemd-analyze"
       - "calendar"
-      - "{{ repo_systemd_timer }}"
+      - "{{ item.systemd_timer_calendar }}"
   register: systemd_analyze_output
+  with_items: "{{ repo_mirror_repos }}"
   failed_when: systemd_analyze_output.rc != 0
+  tags:
+    - 'role::repo_mirror'
+    - 'role::repo_mirror:configuration'
+    - 'role::repo_mirror:configuration:timer'
 
 - name: Create mirror systemd units
   include_role:
@@ -99,7 +104,7 @@
         Unit:
           Description: "Systemd timer unit for mirror script of {{ item.name }}"
         Timer:
-          OnCalendar: "{{ hostvars[item].backup_dirvish_timepoint }}"
+          OnCalendar: "{{ item.systemd_timer_calendar }}"
           Persistent: false
         Install:
           WantedBy: "timers.target"
