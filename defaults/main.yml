@@ -94,6 +94,7 @@ repo_mirror_repos: []
 #       source_repo: security.debian.org::debian-security
 #       systemd_timer_calendar: "*-*-* 0/2:13:00"
 #       systemd_timer_disabled: true # optional
+#       systemd_unit_max_runtime_sec: 43200 # 12 hours
 #
 #     - name: epel
 #       type: rsync_single
@@ -101,6 +102,7 @@ repo_mirror_repos: []
 #       additional_report: '/usr/local/bin/report_mirror -c /etc/mirror/fedora_report.conf'
 #       systemd_timer_calendar: "*-*-* *:58:00"
 #       systemd_timer_disabled: true # optional
+#       systemd_unit_max_runtime_sec: 43200 # 12 hours
 #
 #     - name: centos
 #       type: rsync_single
@@ -108,12 +110,14 @@ repo_mirror_repos: []
 #       rsync_timeout: 300 # Optional, if for example .ISO files time out
 #       systemd_timer_calendar: "*-*-* *:13:00"
 #       systemd_timer_disabled: true # optional
+#       systemd_unit_max_runtime_sec: 43200 # 12 hours
 #
 #     - name: dotdeb
 #       type: rsync_single
 #       source_repo: packages.dotdeb.org::packages
 #       systemd_timer_calendar: "*-*-* *:47:00"
 #       systemd_timer_disabled: true # optional
+#       systemd_unit_max_runtime_sec: 43200 # 12 hours
 #
 #     - name: nodejs
 #       type: wget
@@ -122,15 +126,18 @@ repo_mirror_repos: []
 #       bwlimit: 20000 # Optional, overwrite default
 #       systemd_timer_calendar: "*-*-* 0/2:24:00"
 #       systemd_timer_disabled: true # optional
+#       systemd_unit_max_runtime_sec: 43200 # 12 hours
 #
 #     - name: opensuse
 #       type: rsync_single
 #       source_repo: stage.opensuse.org::opensuse-hotstuff-640gb
 #       systemd_timer_calendar: "*-*-* *:07:00"
 #       systemd_timer_disabled: true # optional
+#       systemd_unit_max_runtime_sec: 43200 # 12 hours
 #
 #     - name: ubuntu
 #       type: rsync_ubuntu
 #       source_repo: rsync://ch.rsync.archive.ubuntu.com/ubuntu
 #       systemd_timer_calendar: "*-*-* 0/2:41:00"
 #       systemd_timer_disabled: true # optional
+#       systemd_unit_max_runtime_sec: 43200 # 12 hours

@@ -81,7 +81,7 @@
           Type: simple
           ExecStart: "/usr/local/bin/mirror_{{ item.name }}.sh"
           KillMode: process
-          RuntimeMaxSec: "{{ max_backup_runtime * 3600 }}"
+          RuntimeMaxSec: "{{ item.systemd_unit_max_runtime_sec }}"
   with_items: "{{ repo_mirror_repos }}"
   when: item is defined and item and item.disabled is not defined
   tags:
