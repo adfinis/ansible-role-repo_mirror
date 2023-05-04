@@ -53,22 +53,20 @@ repo_mirror_repos: []
 #     - name: alpine
 #       type: rsync_single
 #       source_repo: rsync://rsync.alpinelinux.org/alpine/
-#       cron_hour: '*/2'
-#       cron_minute: '23'
-#       cron_disabled: true # optional
+#       systemd_timer_calendar: "*-*-* 0/2:23:00"
+#       systemd_timer_disabled: true # optional
 #
 #     - name: archlinux
 #       source_repo: rsync://mirror.23media.de/archlinux
 #       type: rsync_single
-#       cron_hour: '*'
-#       cron_minute: '*/10'
-#       cron_disabled: true # optional
+#       systemd_timer_calendar: "*-*-* *:0/10:00"
+#       systemd_timer_disabled: true # optional
 #
 #     - name: debian
 #       type: rsync_debian
 #       source_repo: 'ftp.ch.debian.org::debian'
-#       cron_hour: '*/2'
-#       cron_minute: '01'
+#       systemd_timer_calendar: "*-*-* 0/2:01:00"
+#       systemd_timer_disabled: true # optional
 #       excludes:
 #       - alpha
 #       - arm
@@ -90,57 +88,49 @@ repo_mirror_repos: []
 #       - s390x
 #       - sh
 #       - sparc
-#       cron_disabled: true # optional
 #
 #     - name: debian-security
 #       type: rsync_single
 #       source_repo: security.debian.org::debian-security
-#       cron_hour: '*/2'
-#       cron_minute: '13'
-#       cron_disabled: true # optional
+#       systemd_timer_calendar: "*-*-* 0/2:13:00"
+#       systemd_timer_disabled: true # optional
 #
 #     - name: epel
 #       type: rsync_single
 #       source_repo: rsync://dl.fedoraproject.org/fedora-epel
 #       additional_report: '/usr/local/bin/report_mirror -c /etc/mirror/fedora_report.conf'
-#       cron_hour: '*'
-#       cron_minute: '58'
-#       cron_disabled: true # optional
+#       systemd_timer_calendar: "*-*-* *:58:00"
+#       systemd_timer_disabled: true # optional
 #
 #     - name: centos
 #       type: rsync_single
 #       source_repo: eu-msync.centos.org::CentOS
 #       rsync_timeout: 300 # Optional, if for example .ISO files time out
-#       cron_hour: '*'
-#       cron_minute: '13'
-#       cron_disabled: true # optional
+#       systemd_timer_calendar: "*-*-* *:13:00"
+#       systemd_timer_disabled: true # optional
 #
 #     - name: dotdeb
 #       type: rsync_single
 #       source_repo: packages.dotdeb.org::packages
-#       cron_hour: '*'
-#       cron_minute: '47'
-#       cron_disabled: true # optional
+#       systemd_timer_calendar: "*-*-* *:47:00"
+#       systemd_timer_disabled: true # optional
 #
 #     - name: nodejs
 #       type: wget
 #       source_repo: 'https://deb.nodesource.com/node_7.x/'
 #       remotegpgkey: 'https://deb.nodesource.com/gpgkey/nodesource.gpg.key'
 #       bwlimit: 20000 # Optional, overwrite default
-#       cron_hour: '*/2'
-#       cron_minute: 24
-#       cron_disabled: true # optional
+#       systemd_timer_calendar: "*-*-* 0/2:24:00"
+#       systemd_timer_disabled: true # optional
 #
 #     - name: opensuse
 #       type: rsync_single
 #       source_repo: stage.opensuse.org::opensuse-hotstuff-640gb
-#       cron_hour: '*'
-#       cron_minute: '07'
-#       cron_disabled: true # optional
+#       systemd_timer_calendar: "*-*-* *:07:00"
+#       systemd_timer_disabled: true # optional
 #
 #     - name: ubuntu
 #       type: rsync_ubuntu
 #       source_repo: rsync://ch.rsync.archive.ubuntu.com/ubuntu
-#       cron_hour: '*/2'
-#       cron_minute: '41'
-#       cron_disabled: true # optional
+#       systemd_timer_calendar: "*-*-* 0/2:41:00"
+#       systemd_timer_disabled: true # optional
