@@ -7,8 +7,7 @@ driver:
   name: podman
 platforms:
   - name: instance
-    image: docker.io/debian:bullseye
-    pre_build_image: true
+    image: localhost/bullseye_systemd
 provisioner:
   name: ansible
   inventory:
