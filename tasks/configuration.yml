@@ -71,7 +71,7 @@
   register: systemd_analyze_output
   failed_when: systemd_analyze_output.rc != 0
   with_items: "{{ repo_mirror_repos }}"
-  when: item.name is defined
+  when: item.systemd_timer_calendar is defined
   tags:
     - 'role::repo_mirror'
     - 'role::repo_mirror:configuration'
