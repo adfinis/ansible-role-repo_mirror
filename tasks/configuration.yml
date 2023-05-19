@@ -1,7 +1,7 @@
 ---
 
 - name: create sync dirs
-  file:
+  ansible.builtin.file:
     path: "{{ repo_mirror_base_path }}/{{ item.name }}"
     state: directory
     mode: 0755
@@ -14,7 +14,7 @@
     - 'role::repo_mirror:configuration'
 
 - name: create log dirs
-  file:
+  ansible.builtin.file:
     dest: "{{ repo_mirror_log_path }}/{{ item.name }}"
     state: directory
     mode: 0755
@@ -27,7 +27,7 @@
     - 'role::repo_mirror:configuration'
 
 - name: create mirroring scripts
-  template:
+  ansible.builtin.template:
     src: "usr/local/bin/{{ item.type }}_mirror.j2"
     dest: "/usr/local/bin/mirror_{{ item.name }}.sh"
     owner: '{{ item.user | default(repo_mirror_user) }}'
@@ -41,7 +41,7 @@
     - 'role::repo_mirror:configuration:script'
 
 - name: create log rotation config
-  template:
+  ansible.builtin.template:
     src: etc/logrotate.d/config.template.j2
     dest: '/etc/logrotate.d/{{ item.name }}'
     owner: root
@@ -54,10 +54,10 @@
     - 'role::repo_mirror:configuration'
 
 - name: populate timer facts
-  timer_facts:
+  adfinis.facts.timer_facts:
 
 - name: populate service facts
-  service_facts:
+  ansible.builtin.service_facts:
 
 - name: validate calendar format
   ansible.builtin.command:
@@ -74,7 +74,7 @@
     - 'role::repo_mirror:configuration:timer'
 
 - name: Create mirror systemd units
-  include_role:
+  ansible.builtin.include_role:
     name: 0x0i.systemd
   vars:
     unit_config:
@@ -95,7 +95,7 @@
     - 'role::repo_mirror:configuration:timer'
 
 - name: Create mirror systemd timer units and enable
-  include_role:
+  ansible.builtin.include_role:
     name: 0x0i.systemd
   vars:
     unit_config:
@@ -118,7 +118,7 @@
     - 'role::repo_mirror:configuration:unit'
 
 - name: create fedora report script config dir
-  file:
+  ansible.builtin.file:
     path: /etc/mirror
     owner: mirror
     group: mirror
@@ -131,7 +131,7 @@
 
 
 - name: create fedora report script config
-  template:
+  ansible.builtin.template:
     src: templates/etc/mirror/fedora_report.conf.j2
     dest: /etc/mirror/fedora_report.conf
     owner: mirror
@@ -144,7 +144,7 @@
     - 'role::repo_mirror:configuration:fedora_report'
 
 - name: copy fedora report script
-  copy:
+  ansible.builtin.copy:
     src: files/report_mirror
     dest: /usr/local/bin/report_mirror
     owner: mirror
