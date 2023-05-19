@@ -11,5 +11,56 @@ platforms:
     pre_build_image: true
 provisioner:
   name: ansible
+  inventory:
+    host_vars:
+      instance:
+        repo_mirror_fedora_reports:
+          - name: 'Fedora EPEL'
+            enabled: false
+            path: '/var/www/mirror/epel'
+          - name: 'Fedora Linux'
+            enabled: false
+            path: '/var/www/mirror/fedora'
+        repo_mirror_repos:
+          - name: alpine
+            type: rsync_single
+            source_repo: rsync://rsync.alpinelinux.org/alpine/
+            systemd_timer_calendar: "*-*-* 0/2:23:00"
+            systemd_timer_disabled: true
+
+          - name: debian
+            type: rsync_debian
+            source_repo: 'ftp.ch.debian.org::debian'
+            systemd_timer_calendar: "*-*-* 0/2:01:00"
+            systemd_timer_disabled: false
+            excludes:
+              - alpha
+              - arm
+              - arm64
+              - armel
+              - armhf
+              - hppa
+              - hurd-i386
+              - ia64
+              - kfreebsd-amd64
+              - kfreebsd-i386
+              - m68k
+              - mipsel
+              - mips64el
+              - mips
+              - powerpc
+              - ppc64el
+              - s390
+              - s390x
+              - sh
+              - sparc
+
+          - name: epel
+            type: rsync_single
+            source_repo: rsync://dl.fedoraproject.org/fedora-epel
+            additional_report: '/usr/local/bin/report_mirror -c /etc/mirror/fedora_report.conf'
+            systemd_timer_calendar: "*-*-* *:58:00"
+            systemd_timer_disabled: false
+            systemd_unit_max_runtime_sec: 43200
 verifier:
   name: ansible
