@@ -61,8 +61,8 @@
 
 - name: validate calendar format
   ansible.builtin.command:
-    cmd: "systemd-analyze"
     argv:
+      - "systemd-analyze"
       - "calendar"
       - "{{ item.systemd_timer_calendar }}"
   register: systemd_analyze_output
