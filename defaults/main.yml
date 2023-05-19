@@ -49,7 +49,7 @@ repo_mirror_repos: []
 
 # .. code-block:: YAML
 #
-#   repo_mirror_fedora_reports:
+#   repo_mirror_repos:
 #     - name: alpine
 #       type: rsync_single
 #       source_repo: rsync://rsync.alpinelinux.org/alpine/
