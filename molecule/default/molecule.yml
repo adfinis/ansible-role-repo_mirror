@@ -32,7 +32,6 @@ provisioner:
             type: rsync_debian
             source_repo: 'ftp.ch.debian.org::debian'
             systemd_timer_calendar: "*-*-* 0/2:01:00"
-            systemd_timer_disabled: false
             excludes:
               - alpha
               - arm
@@ -60,7 +59,5 @@ provisioner:
             source_repo: rsync://dl.fedoraproject.org/fedora-epel
             additional_report: '/usr/local/bin/report_mirror -c /etc/mirror/fedora_report.conf'
             systemd_timer_calendar: "*-*-* *:58:00"
-            systemd_timer_disabled: false
-            systemd_unit_max_runtime_sec: 43200
 verifier:
   name: ansible
