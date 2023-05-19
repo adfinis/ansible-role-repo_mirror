@@ -1,5 +1,11 @@
 ---
 
+- name: populate timer facts
+  adfinis.facts.timer_facts:
+
+- name: populate service facts
+  ansible.builtin.service_facts:
+
 - name: create sync dirs
   ansible.builtin.file:
     path: "{{ repo_mirror_base_path }}/{{ item.name }}"
@@ -8,10 +14,11 @@
     owner: '{{ item.user | default(repo_mirror_user) }}'
     group: '{{ item.group | default(repo_mirror_group) }}'
   with_items: "{{ repo_mirror_repos }}"
-  when: item is defined and item
+  when: item.name is defined
   tags:
     - 'role::repo_mirror'
     - 'role::repo_mirror:configuration'
+    - 'role::repo_mirror:configuration:dirs'
 
 - name: create log dirs
   ansible.builtin.file:
@@ -21,10 +28,11 @@
     owner: '{{ item.user | default(repo_mirror_user) }}'
     group: '{{ item.group | default(repo_mirror_group) }}'
   with_items: "{{ repo_mirror_repos }}"
-  when: item is defined and item
+  when: item.name is defined
   tags:
     - 'role::repo_mirror'
     - 'role::repo_mirror:configuration'
+    - 'role::repo_mirror:configuration:dirs'
 
 - name: create mirroring scripts
   ansible.builtin.template:
@@ -34,11 +42,11 @@
     group: root
     mode: 0740
   with_items: "{{ repo_mirror_repos }}"
-  when: item is defined and item
+  when: item.name is defined
   tags:
     - 'role::repo_mirror'
     - 'role::repo_mirror:configuration'
-    - 'role::repo_mirror:configuration:script'
+    - 'role::repo_mirror:configuration:scripts'
 
 - name: create log rotation config
   ansible.builtin.template:
@@ -47,17 +55,12 @@
     owner: root
     group: root
     mode: 0744
-  with_items: '{{ repo_mirror_repos }}'
-  when: item is defined and item
+  with_items: "{{ repo_mirror_repos }}"
+  when: item.name is defined
   tags:
     - 'role::repo_mirror'
     - 'role::repo_mirror:configuration'
-
-- name: populate timer facts
-  adfinis.facts.timer_facts:
-
-- name: populate service facts
-  ansible.builtin.service_facts:
+    - 'role::repo_mirror:configuration:logrotate'
 
 - name: validate calendar format
   ansible.builtin.command:
@@ -66,8 +69,9 @@
       - "calendar"
       - "{{ item.systemd_timer_calendar }}"
   register: systemd_analyze_output
-  with_items: "{{ repo_mirror_repos }}"
   failed_when: systemd_analyze_output.rc != 0
+  with_items: "{{ repo_mirror_repos }}"
+  when: item.name is defined
   tags:
     - 'role::repo_mirror'
     - 'role::repo_mirror:configuration'
@@ -88,11 +92,11 @@
           KillMode: process
           RuntimeMaxSec: "{{ item.systemd_unit_max_runtime_sec }}"
   with_items: "{{ repo_mirror_repos }}"
-  when: item is defined and item and item.disabled is not defined
+  when: item.name is defined
   tags:
     - 'role::repo_mirror'
     - 'role::repo_mirror:configuration'
-    - 'role::repo_mirror:configuration:timer'
+    - 'role::repo_mirror:configuration:unit'
 
 - name: Create mirror systemd timer units and enable
   ansible.builtin.include_role:
@@ -111,11 +115,11 @@
         enabled: "{{ not item.systemd_timer_disabled }}"
         state: "started"
   with_items: "{{ repo_mirror_repos }}"
-  when: item is defined
+  when: item.name is defined
   tags:
     - 'role::repo_mirror'
     - 'role::repo_mirror:configuration'
-    - 'role::repo_mirror:configuration:unit'
+    - 'role::repo_mirror:configuration:timer'
 
 - name: create fedora report script config dir
   ansible.builtin.file:
