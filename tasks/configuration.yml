@@ -94,7 +94,8 @@
               ExecStart: "/usr/local/bin/mirror_{{ item.name }}.sh"
               KillMode: process
               RuntimeMaxSec: "{{ item.systemd_unit_max_runtime_sec | default(_default_systemd_unit_max_runtime_sec) }}"
-            state: "{{ item.systemd_timer_unit_state | default(_default_systemd_timer_unit_state) }}"
+            state: "{{ item.systemd_service_unit_state | default(_default_systemd_service_unit_state) }}"
+
           - name: "sync_{{ item.name }}_mirror"
             type: timer
             Unit:
@@ -104,8 +105,8 @@
               Persistent: false
             Install:
               WantedBy: "timers.target"
-            enabled: "{{ item.systemd_timer_disabled | default(_default_systemd_timer_disabled) }}"
-            state: "started"
+            enabled: "{{ item.systemd_timer_enabled | default(_default_systemd_timer_enabled) }}"
+            state: "{{ item.systemd_timer_unit_state | default(_default_systemd_timer_unit_state) }}"
   loop: "{{ repo_mirror_repos }}"
   loop_control:
     loop_var: item
