@@ -27,6 +27,7 @@ provisioner:
             source_repo: rsync://rsync.alpinelinux.org/alpine/
             systemd_timer_calendar: "*-*-* 0/2:23:00"
             systemd_timer_disabled: true
+            systemd_timer_unit_state: 'started'
 
           - name: debian
             type: rsync_debian

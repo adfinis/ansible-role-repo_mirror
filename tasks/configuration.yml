@@ -94,6 +94,7 @@
               ExecStart: "/usr/local/bin/mirror_{{ item.name }}.sh"
               KillMode: process
               RuntimeMaxSec: "{{ item.systemd_unit_max_runtime_sec | default(_default_systemd_unit_max_runtime_sec) }}"
+            state: "{{ item.systemd_timer_unit_state | default(_default_systemd_timer_unit_state) }}"
           - name: "sync_{{ item.name }}_mirror"
             type: timer
             Unit:

@@ -28,6 +28,9 @@ _default_systemd_unit_max_runtime_sec: 43200  # 12 hours
 # the default enabled state of a systemd unit / timer
 _default_systemd_timer_disabled: false
 
+# the default unit state of a systemd service unit
+_default_systemd_timer_unit_state: 'stopped'
+
 # The FQDN of the mirror
 repo_mirror_fqdn: 'mirror.example.com'
 
