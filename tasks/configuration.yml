@@ -89,6 +89,8 @@
               Description: "Systemd unit for mirror script of {{ item.name }}"
             Service:
               Type: simple
+              User: "{{ repo_mirror_user }}"
+              Group: "{{ repo_mirror_group }}"
               ExecStart: "/usr/local/bin/mirror_{{ item.name }}.sh"
               KillMode: process
               RuntimeMaxSec: "{{ item.systemd_unit_max_runtime_sec | default(_default_systemd_unit_max_runtime_sec) }}"
