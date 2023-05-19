@@ -8,3 +8,6 @@ collections:
   - containers.podman
   - ansible.posix
   - community.general
+  - name: https://github.com/aconitumnapellus/adfinis.facts
+    type: git
+    version: main
