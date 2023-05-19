@@ -80,46 +80,36 @@
 - name: Create mirror systemd units
   ansible.builtin.include_role:
     name: 0x0i.systemd
-  vars:
-    unit_config:
-      - name: "sync_{{ item.name }}_mirror"
-        type: service
-        Unit:
-          Description: "Systemd unit for mirror script of {{ item.name }}"
-        Service:
-          Type: simple
-          ExecStart: "/usr/local/bin/mirror_{{ item.name }}.sh"
-          KillMode: process
-          RuntimeMaxSec: "{{ item.systemd_unit_max_runtime_sec }}"
-  with_items: "{{ repo_mirror_repos }}"
-  when: item.name is defined
+    apply:
+      vars:
+        unit_config:
+          - name: "sync_{{ item.name }}_mirror"
+            type: service
+            Unit:
+              Description: "Systemd unit for mirror script of {{ item.name }}"
+            Service:
+              Type: simple
+              ExecStart: "/usr/local/bin/mirror_{{ item.name }}.sh"
+              KillMode: process
+              RuntimeMaxSec: "{{ item.systemd_unit_max_runtime_sec | default(_default_systemd_unit_max_runtime_sec) }}"
+          - name: "sync_{{ item.name }}_mirror"
+            type: timer
+            Unit:
+              Description: "Systemd timer unit for mirror script of {{ item.name }}"
+            Timer:
+              OnCalendar: "{{ item.systemd_timer_calendar }}"
+              Persistent: false
+            Install:
+              WantedBy: "timers.target"
+            enabled: "{{ item.systemd_timer_disabled | default(_default_systemd_timer_disabled) }}"
+            state: "started"
+  loop: "{{ repo_mirror_repos }}"
+  loop_control:
+    loop_var: item
   tags:
     - 'role::repo_mirror'
     - 'role::repo_mirror:configuration'
     - 'role::repo_mirror:configuration:unit'
-
-- name: Create mirror systemd timer units and enable
-  ansible.builtin.include_role:
-    name: 0x0i.systemd
-  vars:
-    unit_config:
-      - name: "sync_{{ item.name }}_mirror"
-        type: timer
-        Unit:
-          Description: "Systemd timer unit for mirror script of {{ item.name }}"
-        Timer:
-          OnCalendar: "{{ item.systemd_timer_calendar }}"
-          Persistent: false
-        Install:
-          WantedBy: "timers.target"
-        enabled: "{{ not item.systemd_timer_disabled }}"
-        state: "started"
-  with_items: "{{ repo_mirror_repos }}"
-  when: item.name is defined
-  tags:
-    - 'role::repo_mirror'
-    - 'role::repo_mirror:configuration'
-    - 'role::repo_mirror:configuration:timer'
 
 - name: create fedora report script config dir
   ansible.builtin.file:

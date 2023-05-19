@@ -22,6 +22,12 @@ repo_mirror_bwlimit: 30MiB
 # The default rsync timeout in seconds
 repo_mirror_rsync_timeout: 30
 
+# the default max runtime for a sync job
+_default_systemd_unit_max_runtime_sec: 43200  # 12 hours
+
+# the default enabled state of a systemd unit / timer
+_default_systemd_timer_disabled: false
+
 # The FQDN of the mirror
 repo_mirror_fqdn: 'mirror.example.com'
 
