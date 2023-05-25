@@ -35,6 +35,6 @@
     - 'role::repo_mirror'
     - 'role::repo_mirror:installation'
   with_items:
-   - '{{ repo_mirror_base_path }}'
-   - '{{ repo_mirror_tmp_path }}'
-   - '{{ repo_mirror_log_path }}'
+    - '{{ repo_mirror_base_path }}'
+    - '{{ repo_mirror_tmp_path }}'
+    - '{{ repo_mirror_log_path }}'
