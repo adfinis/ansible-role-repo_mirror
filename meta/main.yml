@@ -1,9 +1,8 @@
 ---
 
-dependencies: []
-
 galaxy_info:
   role_name: repo_mirror
+  namespace: adfinis
   author: 'Adfinis SyGroup AG'
   description: 'Mirror a specified repository'
   company: 'Adfinis SyGroup AG'
@@ -12,20 +11,16 @@ galaxy_info:
   platforms:
     - name: Debian
       versions:
-        - wheezy
-        - jessie
-        - stretch
-    - name: Ubuntu
-      versions:
-        - trusty
-        - xenial
-        - bionic
-    - name: EL
-      versions:
-        - 6
-        - 7
+        - bullseye
   galaxy_tags:
     - repository
     - mirror
     - rsync
     - wget
+
+collections:
+  - ansible.posix
+  - community.general
+
+dependencies:
+  - name: 0x0i.systemd

@@ -1,0 +1,7 @@
+---
+
+- name: prepare docker image
+  hosts: all
+  gather_facts: false
+  roles:
+    - role: jonaspammer.bootstrap

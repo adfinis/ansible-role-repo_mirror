@@ -1,0 +1,63 @@
+---
+dependency:
+  name: galaxy
+  options:
+    role-file: requirements.yml
+driver:
+  name: podman
+platforms:
+  - name: instance
+    image: localhost/bullseye_systemd
+provisioner:
+  name: ansible
+  inventory:
+    host_vars:
+      instance:
+        repo_mirror_fedora_reports:
+          - name: 'Fedora EPEL'
+            enabled: false
+            path: '/var/www/mirror/epel'
+          - name: 'Fedora Linux'
+            enabled: false
+            path: '/var/www/mirror/fedora'
+        repo_mirror_repos:
+          - name: alpine
+            type: rsync_single
+            source_repo: rsync://rsync.alpinelinux.org/alpine/
+            systemd_timer_calendar: "*-*-* 0/2:23:00"
+            systemd_timer_disabled: true
+            systemd_timer_unit_state: 'started'
+
+          - name: debian
+            type: rsync_debian
+            source_repo: 'ftp.ch.debian.org::debian'
+            systemd_timer_calendar: "*-*-* 0/2:01:00"
+            excludes:
+              - alpha
+              - arm
+              - arm64
+              - armel
+              - armhf
+              - hppa
+              - hurd-i386
+              - ia64
+              - kfreebsd-amd64
+              - kfreebsd-i386
+              - m68k
+              - mipsel
+              - mips64el
+              - mips
+              - powerpc
+              - ppc64el
+              - s390
+              - s390x
+              - sh
+              - sparc
+
+          - name: epel
+            type: rsync_single
+            source_repo: rsync://dl.fedoraproject.org/fedora-epel
+            additional_report: '/usr/local/bin/report_mirror -c /etc/mirror/fedora_report.conf'
+            systemd_timer_calendar: "*-*-* *:58:00"
+verifier:
+  name: ansible

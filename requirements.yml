@@ -1,0 +1,14 @@
+---
+
+roles:
+  - name: jonaspammer.bootstrap
+  - name: 0x0i.systemd
+
+collections:
+  - containers.podman
+  - ansible.posix
+  - community.general
+  # @TODO: This needs to be migrated to a collection in the adfinis namespace
+  - name: https://github.com/aconitumnapellus/adfinis.facts
+    type: git
+    version: main

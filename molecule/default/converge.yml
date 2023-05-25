@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include adfinis.repo_mirror"
+      ansible.builtin.include_role:
+        name: "adfinis.repo_mirror"
