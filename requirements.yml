@@ -2,6 +2,7 @@
 
 roles:
   - name: jonaspammer.bootstrap
+  # @TODO: Use the galaxy uri again once a new release has been created
   - name: https://github.com/O1ahmad/ansible-role-systemd
 
 collections:
