@@ -2,7 +2,7 @@
 
 roles:
   - name: jonaspammer.bootstrap
-  - name: 0x0i.systemd
+  - name: https://github.com/O1ahmad/ansible-role-systemd
 
 collections:
   - containers.podman
