@@ -3,7 +3,9 @@
 roles:
   - name: jonaspammer.bootstrap
   # @TODO: Use the galaxy uri again once a new release has been created
-  - name: https://github.com/O1ahmad/ansible-role-systemd
+  - src: https://github.com/O1ahmad/ansible-role-systemd
+    version: master
+    scm: git
 
 collections:
   - containers.podman
