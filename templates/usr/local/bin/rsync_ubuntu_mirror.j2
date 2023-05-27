@@ -4,10 +4,12 @@
 # usage:    This script is used to mirror the {{ item.name }} package repository.
 #
 
-tmp_path="{{ repo_mirror_tmp_path }}"
-base_path="{{ repo_mirror_base_path }}/{{ item.name }}"
-log_file="{{ repo_mirror_log_path }}/{{ item.name }}/repo_{{ item.name }}.log"
-status_file="{{ repo_mirror_base_path }}/{{ item.name }}.json"
+repo_name={{ item.name | quote }}
+tmp_path={{ repo_mirror_tmp_path | quote }}
+base_path={{ repo_mirror_base_path | quote }}/$repo_name
+log_file={{ repo_mirror_log_path | quote }}/$repo_name/repo_$repo_name.log
+status_file=$base_path.json
+owner={{ repo_mirror_user | quote }}
 
 repo_source="{{ item.source_repo }}"
 # compute exclude patterns
@@ -23,13 +25,12 @@ then
 fi
 {% endif %}
 
-datetime_format="{{ repo_mirror_datetime_format }}"
-bwlimit="{{ item.bwlimit | default(repo_mirror_bwlimit) }}"
-rsync_timeout="{{ item.rsync_timeout | default(repo_mirror_rsync_timeout) }}"
+datetime_format={{ repo_mirror_datetime_format | quote }}
+bwlimit={{ item.bwlimit | default(repo_mirror_bwlimit) | quote }}
+rsync_timeout={{ item.rsync_timeout | default(repo_mirror_rsync_timeout) | quote }}
 
-lock="/tmp/sync_{{ item.name }}_mirror.lck"
-lastupdate_tmp=$(mktemp)
-rsyncexitcode="-1"
+lock=/tmp/sync_${repo_name}_mirror.lck
+rsyncexitcode=-1
 
 
 function writestatistics() {
@@ -60,19 +61,25 @@ function log-message() {
     fi
 }
 
-# create lock or exit if already locked in order to prevent multiple syncs
-exec 9>"${lock}"
-flock -n 9 || log-message 1 "{{ item.name }} mirror rsync job is already running!" 1
-
-# exit if there weren't any changes
-if diff -b <(curl -s "${lastupdate_url}") "${base_path}/project/trace/{{ repo_mirror_fqdn }}" >/dev/null; then
-    log-message 1 "Mirror is already up to date!" 0
+# Running as the incorrect user (probably root) could potentially create files
+# with the wrong ownership, leading to issues for later syncs:
+if ! username=$(id -un); then
+    echo 'Could not obtain user name.'
+    exit 1
+fi
+if [ "$username" != "$owner" ]; then
+    echo "Running as $username, but must run as $owner, otherwise this will break future syncs!"
+    exit 1
 fi
 
+# create lock or exit if already locked in order to prevent multiple syncs
+exec 9>"${lock}"
+flock -n 9 || log-message 1 "$repo_name mirror rsync job is already running!" 1
+
 # start to rsync the mirror (stage 1)
-log-message 0 "Started stage 1 of {{ item.name }} mirror rsync job."
+log-message 0 "Started stage 1 of $repo_name mirror rsync job."
 eval rsync --verbose --log-file="${log_file}" --no-motd --human-readable --recursive \
-    --hard-links --links --safe-links --times --perms \
+    --hard-links --links --safe-links --times --perms --chmod=u=rwX,go=rX \
     --delay-updates --temp-dir="${tmp_path}" \
     --bwlimit="${bwlimit}" --timeout=120 --contimeout=60 \
     --exclude 'Packages*' --exclude 'Sources*' \
@@ -89,9 +96,9 @@ else
 fi
 
 # start to rsync the mirror (stage 2)
-log-message 0 "Started stage 2 of {{ item.name }} mirror rsync job."
+log-message 0 "Started stage 2 of $repo_name mirror rsync job."
 eval rsync --verbose --log-file="${log_file}" --no-motd --human-readable --recursive \
-    --hard-links --links --safe-links --times --perms \
+    --hard-links --links --safe-links --times --perms --chmod=u=rwX,go=rX \
     --delete-after --temp-dir="${tmp_path}" \
     --bwlimit="${bwlimit}" --timeout=120 --contimeout=60 \
     "${exclude}" \
@@ -102,7 +109,7 @@ rsyncexitcode="$?"
 if [ "${rsyncexitcode}" = "0" ]; then
     log-message 0 "Second stage of rsync done successfully."
     date -u > ${base_path}/project/trace/$(hostname -f)
-    log-message 1 "Finished {{ item.name }} mirror rsync job." ${rsyncexitcode} # -> exit 0
+    log-message 1 "Finished $repo_name mirror rsync job." ${rsyncexitcode} # -> exit 0
 else
     log-message 1 "First stage of rsync done successfully." ${rsyncexitcode}
 fi

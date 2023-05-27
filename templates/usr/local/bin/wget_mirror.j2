@@ -4,22 +4,23 @@
 # usage:    This script is used to mirror the {{ item.name }} package repository.
 #
 
-tmp_path="{{ repo_mirror_tmp_path }}"
-base_path="{{ repo_mirror_base_path }}/{{ item.name }}"
-log_file="{{ repo_mirror_log_path }}/{{ item.name }}/repo_{{ item.name }}.log"
-status_file="{{ repo_mirror_base_path }}/{{ item.name }}.json"
+repo_name={{ item.name | quote }}
+tmp_path={{ repo_mirror_tmp_path | quote }}
+base_path={{ repo_mirror_base_path | quote }}/$repo_name
+log_file={{ repo_mirror_log_path | quote }}/$repo_name/repo_$repo_name.log
+status_file=$base_path.json
+owner={{ repo_mirror_user | quote }}
 
-repo_source="{{ item.source_repo }}"
+repo_source={{ item.source_repo | quote }}
 
-datetime_format="{{ repo_mirror_datetime_format }}"
-bwlimit="{{ item.bwlimit | default(repo_mirror_bwlimit) }}"
-rsync_timeout="{{ item.rsync_timeout | default(repo_mirror_rsync_timeout) }}"
+datetime_format={{ repo_mirror_datetime_format | quote }}
+bwlimit={{ item.bwlimit | default(repo_mirror_bwlimit) | quote }}
+rsync_timeout={{ item.rsync_timeout | default(repo_mirror_rsync_timeout) | quote }}
 
-lock="/tmp/sync_{{ item.name }}_mirror.lck"
-lastupdate_tmp=$(mktemp)
-exitcode="-1"
+lock=/tmp/sync_${repo_name}_mirror.lck
+exitcode=-1
 
-remotegpgkey="{{ item.remotegpgkey }}"
+remotegpgkey={{ item.remotegpgkey | quote }}
 
 
 function writestatistics() {
@@ -50,11 +51,22 @@ function log-message() {
     fi
 }
 
+# Running as the incorrect user (probably root) could potentially create files
+# with the wrong ownership, leading to issues for later syncs:
+if ! username=$(id -un); then
+    echo 'Could not obtain user name.'
+    exit 1
+fi
+if [ "$username" != "$owner" ]; then
+    echo "Running as $username, but must run as $owner, otherwise this will break future syncs!"
+    exit 1
+fi
+
 # create lock or exit if already locked in order to prevent multiple syncs
 exec 9>"${lock}"
-flock -n 9 || log-message 1 "{{ item.name }} mirror rsync job is already running!" 1
+flock -n 9 || log-message 1 "$repo_name mirror rsync job is already running!" 1
 
-log-message 0 "Started {{ item.name }} mirror sync job."
+log-message 0 "Started $repo_name mirror sync job."
 
 # Sync GPG Key
 wget -c ${remotegpgkey} --directory-prefix=${base_path}
@@ -70,7 +82,7 @@ exitcode="$?"
 find ${base_path} -name '*html' -exec rm {} \;
 
 if [ "${exitcode}" = "0" ]; then
-    log-message 1 "Finished {{ item.name }} mirror sync job." ${exitcode} # = 0
+    log-message 1 "Finished $repo_name mirror sync job." ${exitcode} # = 0
 else
     log-message 1 "Sync job had an error: ${exitcode}" ${exitcode} # >= 1
 fi

@@ -6,3 +6,4 @@ repo_mirror_packages:
   - wget
   - logrotate
   - git
+  - systemd
