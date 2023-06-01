@@ -86,7 +86,7 @@ fi
 log-message 0 "Started stage 2 of $repo_name mirror rsync job."
 rsync --verbose --log-file="${log_file}" --no-motd --human-readable --recursive \
     --hard-links --links --safe-links --times --perms --chmod=u=rwX,go=rX \
-    --delete-after --temp-dir="${tmp_path}" \
+    --delete-during --temp-dir="${tmp_path}" \
     --bwlimit="${bwlimit}" --timeout=120 --contimeout=60 \
     "${repo_source}" \
     "${base_path}"

@@ -78,7 +78,7 @@ fi
 log-message 0 "Started $repo_name mirror rsync job."
 rsync --verbose --log-file="${log}" --no-motd --human-readable --recursive \
     --hard-links --links --safe-links --times --perms --chmod=u=rwX,go=rX \
-    --delete-after --delay-updates --temp-dir="${tmp_path}" \
+    --delete-during --delay-updates --temp-dir="${tmp_path}" \
     --bwlimit="${bwlimit}" --timeout="${rsync_timeout}" --contimeout=60 \
     "${repo_source}" \
     "${base_path}"
