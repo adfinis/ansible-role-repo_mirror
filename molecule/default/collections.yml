@@ -1,0 +1,7 @@
+---
+
+collections:
+  - containers.podman
+  - ansible.posix
+  - community.general
+  - adfinis.facts
