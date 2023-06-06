@@ -10,7 +10,7 @@ Ansible role that helps deploying a package mirror
 
 ## Requirements
 
--   A debian system with bullseye is required
+-   Debian Bullseye
 -   systemd as init system is required
 -   Before you use this role, create a storage pool with something like
     ZFS and mount it at the location where the mirrored repositories
