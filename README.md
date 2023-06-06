@@ -197,5 +197,5 @@ You can check the [molecule default scenario](https://github.com/adfinis/ansible
 repo_mirror role was written by:
 
 -   Adfinis AG | [Website](https://www.adfinis.com/) \|
-    [Twitter](https://twitter.com/adfinissygroup) \|
-    [GitHub](https://github.com/adfinis-sygroup)
+    [Twitter](https://twitter.com/adfinis) \|
+    [GitHub](https://github.com/adfinis)
