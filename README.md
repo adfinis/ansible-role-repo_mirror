@@ -186,7 +186,7 @@ molecule requirements.
 
 ## Example Playbook
 
-You can check the molecule default scenario for an example playbook.
+You can check the [molecule default scenario](https://github.com/adfinis/ansible-role-repo_mirror/blob/master/molecule/default/converge.yml) for an example playbook.
 
 ## License
 
