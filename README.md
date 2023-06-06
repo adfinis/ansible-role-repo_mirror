@@ -33,7 +33,7 @@ repo_mirror_packages:
 ```yaml
 ---
 
-# vars/Debian.yml
+# defaults/Debian.yml
 
 # The default user mirrors will use
 repo_mirror_user: mirror
