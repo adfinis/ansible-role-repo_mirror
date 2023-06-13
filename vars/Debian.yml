@@ -7,3 +7,5 @@ repo_mirror_packages:
   - logrotate
   - git
   - systemd
+  - npm
+  - make

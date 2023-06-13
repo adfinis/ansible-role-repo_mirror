@@ -38,3 +38,18 @@
    - '{{ repo_mirror_base_path }}'
    - '{{ repo_mirror_tmp_path }}'
    - '{{ repo_mirror_log_path }}'
+
+- name: clone landingpage repository
+  ansible.builtin.git:
+    repo: https://github.com/adfinis/landingpage-repo_mirror
+    dest: /opt/landingpage
+
+- name: install npm dependencies
+  ansible.builtin.shell:
+    command: npm install
+    chdir: /opt/landingpage
+
+- name: build landingpage
+  ansible.builtin.shell:
+    command: make prod
+    chdir: /opt/landingpage
