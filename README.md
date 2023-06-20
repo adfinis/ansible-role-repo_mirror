@@ -1,8 +1,8 @@
 # ROLE REPO MIRROR
 
-[![image](https://img.shields.io/github/license/adfinis-sygroup/ansible-role-repo_mirror.svg?style=flat-square)](https://github.com/adfinis-sygroup/ansible-role-repo_mirror/blob/master/LICENSE)
+[![image](https://img.shields.io/github/license/adfinis/ansible-role-repo_mirror.svg?style=flat-square)](https://github.com/adfinis/ansible-role-repo_mirror/blob/master/LICENSE)
 
-[![image](https://img.shields.io/travis/adfinis-sygroup/ansible-role-repo_mirror.svg?style=flat-square)](https://github.com/adfinis-sygroup/ansible-role-repo_mirror)
+[![image](https://img.shields.io/travis/adfinis/ansible-role-repo_mirror.svg?style=flat-square)](https://github.com/adfinis/ansible-role-repo_mirror)
 
 [![image](https://img.shields.io/badge/galaxy-adfinis--sygroup.repo_mirror-660198.svg?style=flat-square)](https://galaxy.ansible.com/adfinis-sygroup/repo_mirror)
 
