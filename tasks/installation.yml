@@ -45,9 +45,9 @@
     dest: '{{ repo_mirror_landingpage_clone_dir }}'
     force: true
 
-- name: install npm dependencies
+- name: run yarn and let yarn install the dependencies for yarn
   ansible.builtin.shell:
-    command: npm install
+    command: yarnpkg
     chdir: '{{ repo_mirror_landingpage_clone_dir }}'
 
 - name: build landingpage
