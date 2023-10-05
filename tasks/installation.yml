@@ -39,6 +39,11 @@
    - '{{ repo_mirror_tmp_path }}'
    - '{{ repo_mirror_log_path }}'
 
+- name: create landingpage folder
+  ansible.builtin.file:
+    path: '{{ repo_mirror_landingpage_clone_dir }}'
+    state: directory
+
 - name: clone landingpage repository
   ansible.builtin.git:
     repo: https://github.com/adfinis/landingpage-repo_mirror
