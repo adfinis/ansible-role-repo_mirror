@@ -55,16 +55,3 @@
   ansible.builtin.shell:
     cmd: yarnpkg
     chdir: '{{ repo_mirror_landingpage_clone_dir }}'
-
-- name: build landingpage
-  ansible.builtin.shell:
-    cmd: make prod
-    chdir: '{{ repo_mirror_landingpage_clone_dir }}'
-
-- name: deploy landingpage
-  ansible.builtin.copy:
-    dest: '{{ repo_mirror_base_path }}'
-    src: '{{ repo_mirror_landingpage_clone_dir }}/dist/'
-    remote_src: true
-    group: www-data
-    owner: www-data

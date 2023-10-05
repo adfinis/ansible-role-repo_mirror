@@ -154,3 +154,24 @@
     - 'role::repo_mirror'
     - 'role::repo_mirror:configuration'
     - 'role::repo_mirror:configuration:fedora_report'
+
+- name: build landingpage
+  ansible.builtin.shell:
+    cmd: make prod
+    chdir: '{{ repo_mirror_landingpage_clone_dir }}'
+  tags:
+    - 'role::repo_mirror'
+    - 'role::repo_mirror:configuration'
+    - 'role::repo_mirror:configuration:landingpage'
+
+- name: deploy landingpage
+  ansible.builtin.copy:
+    dest: '{{ repo_mirror_base_path }}'
+    src: '{{ repo_mirror_landingpage_clone_dir }}/dist/'
+    remote_src: true
+    group: www-data
+    owner: www-data
+  tags:
+    - 'role::repo_mirror'
+    - 'role::repo_mirror:configuration'
+    - 'role::repo_mirror:configuration:landingpage'
