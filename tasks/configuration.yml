@@ -171,6 +171,7 @@
     remote_src: true
     group: www-data
     owner: www-data
+  when: not ansible_check_mode
   tags:
     - 'role::repo_mirror'
     - 'role::repo_mirror:configuration'
