@@ -66,4 +66,4 @@
     src: '{{ repo_mirror_landingpage_clone_dir }}/dist/'
     remote_src: true
     group: www-data
-    user: www-data
+    owner: www-data
