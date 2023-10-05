@@ -43,6 +43,7 @@
   ansible.builtin.file:
     path: '{{ repo_mirror_landingpage_clone_dir }}'
     state: directory
+  check_mode: false
 
 - name: clone landingpage repository
   ansible.builtin.git:
