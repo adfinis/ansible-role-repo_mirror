@@ -47,12 +47,12 @@
 
 - name: run yarn and let yarn install the dependencies for yarn
   ansible.builtin.shell:
-    command: yarnpkg
+    cmd: yarnpkg
     chdir: '{{ repo_mirror_landingpage_clone_dir }}'
 
 - name: build landingpage
   ansible.builtin.shell:
-    command: make prod
+    cmd: make prod
     chdir: '{{ repo_mirror_landingpage_clone_dir }}'
 
 - name: deploy landingpage
