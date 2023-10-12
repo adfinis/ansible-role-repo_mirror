@@ -45,17 +45,29 @@
     state: directory
     mode: "0755"
   check_mode: false
+  tags:
+    - 'role::repo_mirror'
+    - 'role::repo_mirror:configuration'
+    - 'role::repo_mirror:configuration:landingpage'
 
 - name: Clone landingpage repository
   ansible.builtin.git:
     repo: https://github.com/adfinis/landingpage-repo_mirror
     dest: '{{ repo_mirror_landingpage_clone_dir }}'
     force: true
+  tags:
+    - 'role::repo_mirror'
+    - 'role::repo_mirror:configuration'
+    - 'role::repo_mirror:configuration:landingpage'
 
 - name: Run yarn and let yarn install the dependencies for yarn
   ansible.builtin.command:
     cmd: yarnpkg
     chdir: '{{ repo_mirror_landingpage_clone_dir }}'
+  tags:
+    - 'role::repo_mirror'
+    - 'role::repo_mirror:configuration'
+    - 'role::repo_mirror:configuration:landingpage'
 
 - name: Build landingpage
   ansible.builtin.command:
