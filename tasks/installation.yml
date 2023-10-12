@@ -1,6 +1,6 @@
 ---
 
-- name: ensure script dependencies are installed
+- name: Ensure script dependencies are installed
   package:
     name: '{{ repo_mirror_packages }}'
     state: present
@@ -8,7 +8,7 @@
     - 'role::repo_mirror'
     - 'role::repo_mirror:installation'
 
-- name: ensure mirror group is present
+- name: Ensure mirror group is present
   group:
     name: '{{ repo_mirror_group }}'
     state: present
@@ -16,7 +16,7 @@
     - 'role::repo_mirror'
     - 'role::repo_mirror:installation'
 
-- name: ensure mirror user is present
+- name: Ensure mirror user is present
   user:
     name: '{{ repo_mirror_user }}'
     state: present
@@ -24,34 +24,47 @@
     - 'role::repo_mirror'
     - 'role::repo_mirror:installation'
 
-- name: ensure mirror directories are present
+- name: Ensure mirror directories are present
   file:
     path: "{{ item }}"
     state: directory
-    mode: 0755
+    mode: 755
     owner: "{{ repo_mirror_user }}"
     group: "{{ repo_mirror_group }}"
   tags:
     - 'role::repo_mirror'
     - 'role::repo_mirror:installation'
   with_items:
-   - '{{ repo_mirror_base_path }}'
-   - '{{ repo_mirror_tmp_path }}'
-   - '{{ repo_mirror_log_path }}'
+    - '{{ repo_mirror_base_path }}'
+    - '{{ repo_mirror_tmp_path }}'
+    - '{{ repo_mirror_log_path }}'
 
-- name: create landingpage folder
+- name: Create landingpage folder
   ansible.builtin.file:
     path: '{{ repo_mirror_landingpage_clone_dir }}'
     state: directory
+    mode: "0755"
   check_mode: false
 
-- name: clone landingpage repository
+- name: Clone landingpage repository
   ansible.builtin.git:
     repo: https://github.com/adfinis/landingpage-repo_mirror
     dest: '{{ repo_mirror_landingpage_clone_dir }}'
     force: true
 
-- name: run yarn and let yarn install the dependencies for yarn
-  ansible.builtin.shell:
+- name: Run yarn and let yarn install the dependencies for yarn
+  ansible.builtin.command:
     cmd: yarnpkg
     chdir: '{{ repo_mirror_landingpage_clone_dir }}'
+
+- name: Build landingpage
+  ansible.builtin.command:
+    cmd: make prod
+    chdir: '{{ repo_mirror_landingpage_clone_dir }}'
+
+- name: Deploy landingpage
+  ansible.builtin.copy:
+    dest: '{{ repo_mirror_base_path }}'
+    src: '{{ repo_mirror_landingpage_clone_dir }}/dist/'
+    mode: "0755"
+    remote_src: true
