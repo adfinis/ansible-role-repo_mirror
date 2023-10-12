@@ -61,6 +61,10 @@
   ansible.builtin.command:
     cmd: make prod
     chdir: '{{ repo_mirror_landingpage_clone_dir }}'
+  tags:
+    - 'role::repo_mirror'
+    - 'role::repo_mirror:configuration'
+    - 'role::repo_mirror:configuration:landingpage'
 
 - name: Deploy landingpage
   ansible.builtin.copy:
@@ -68,3 +72,10 @@
     src: '{{ repo_mirror_landingpage_clone_dir }}/dist/'
     mode: "0755"
     remote_src: true
+    group: www-data
+    owner: www-data
+  when: not ansible_check_mode
+  tags:
+    - 'role::repo_mirror'
+    - 'role::repo_mirror:configuration'
+    - 'role::repo_mirror:configuration:landingpage'
