@@ -122,6 +122,7 @@
     owner: mirror
     group: mirror
     state: directory
+    mode: "0755"
   when: repo_mirror_fedora_report and repo_mirror_fedora_reports is defined and repo_mirror_fedora_reports
   tags:
     - 'role::repo_mirror'
