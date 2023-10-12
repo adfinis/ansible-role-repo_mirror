@@ -24,7 +24,7 @@ collections:
   - adfinis.facts
 
 dependencies:
-  - name: jonaspammer.bootstrap
+  - name: robertdebock.bootstrap
   # @TODO: Use the galaxy uri again once a new release has been created
   - src: https://github.com/O1ahmad/ansible-role-systemd
     version: master
