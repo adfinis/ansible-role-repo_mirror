@@ -28,7 +28,7 @@
   file:
     path: "{{ item }}"
     state: directory
-    mode: 755
+    mode: "0755"
     owner: "{{ repo_mirror_user }}"
     group: "{{ repo_mirror_group }}"
   tags:

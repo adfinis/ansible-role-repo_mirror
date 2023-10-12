@@ -10,7 +10,7 @@
   ansible.builtin.file:
     path: "{{ repo_mirror_base_path }}/{{ item.name }}"
     state: directory
-    mode: 755
+    mode: "0755"
     owner: '{{ item.user | default(repo_mirror_user) }}'
     group: '{{ item.group | default(repo_mirror_group) }}'
   with_items: "{{ repo_mirror_repos }}"
@@ -24,7 +24,7 @@
   ansible.builtin.file:
     dest: "{{ repo_mirror_log_path }}/{{ item.name }}"
     state: directory
-    mode: 755
+    mode: "0755"
     owner: '{{ item.user | default(repo_mirror_user) }}'
     group: '{{ item.group | default(repo_mirror_group) }}'
   with_items: "{{ repo_mirror_repos }}"
@@ -40,7 +40,7 @@
     dest: "/usr/local/bin/mirror_{{ item.name }}.sh"
     owner: '{{ item.user | default(repo_mirror_user) }}'
     group: root
-    mode: 740
+    mode: "0740"
   with_items: "{{ repo_mirror_repos }}"
   when: item.name is defined
   tags:
@@ -54,7 +54,7 @@
     dest: '/etc/logrotate.d/{{ item.name }}'
     owner: root
     group: root
-    mode: 744
+    mode: "0744"
   with_items: "{{ repo_mirror_repos }}"
   when: item.name is defined
   tags:
@@ -135,7 +135,7 @@
     dest: /etc/mirror/fedora_report.conf
     owner: mirror
     group: mirror
-    mode: 640
+    mode: "0640"
   when: repo_mirror_fedora_report and repo_mirror_fedora_reports is defined and repo_mirror_fedora_reports
   tags:
     - 'role::repo_mirror'
@@ -148,7 +148,7 @@
     dest: /usr/local/bin/report_mirror
     owner: mirror
     group: mirror
-    mode: 750
+    mode: "0750"
   when: repo_mirror_fedora_report
   tags:
     - 'role::repo_mirror'
