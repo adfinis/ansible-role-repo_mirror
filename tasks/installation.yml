@@ -1,7 +1,7 @@
 ---
 
 - name: Ensure script dependencies are installed
-  package:
+  ansible.builtin.package:
     name: '{{ repo_mirror_packages }}'
     state: present
   tags:
@@ -9,7 +9,7 @@
     - 'role::repo_mirror:installation'
 
 - name: Ensure mirror group is present
-  group:
+  ansible.builtin.group:
     name: '{{ repo_mirror_group }}'
     state: present
   tags:
@@ -17,7 +17,7 @@
     - 'role::repo_mirror:installation'
 
 - name: Ensure mirror user is present
-  user:
+  ansible.builtin.user:
     name: '{{ repo_mirror_user }}'
     state: present
   tags:
@@ -25,7 +25,7 @@
     - 'role::repo_mirror:installation'
 
 - name: Ensure mirror directories are present
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     mode: "0755"
