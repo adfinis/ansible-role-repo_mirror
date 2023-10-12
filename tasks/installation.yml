@@ -39,6 +39,12 @@
    - '{{ repo_mirror_tmp_path }}'
    - '{{ repo_mirror_log_path }}'
 
+- name: create landingpage folder
+  ansible.builtin.file:
+    path: '{{ repo_mirror_landingpage_clone_dir }}'
+    state: directory
+  check_mode: false
+
 - name: clone landingpage repository
   ansible.builtin.git:
     repo: https://github.com/adfinis/landingpage-repo_mirror
@@ -47,16 +53,5 @@
 
 - name: run yarn and let yarn install the dependencies for yarn
   ansible.builtin.shell:
-    command: yarnpkg
+    cmd: yarnpkg
     chdir: '{{ repo_mirror_landingpage_clone_dir }}'
-
-- name: build landingpage
-  ansible.builtin.shell:
-    command: make prod
-    chdir: '{{ repo_mirror_landingpage_clone_dir }}'
-
-- name: deploy landingpage
-  ansible.builtin.copy:
-    dest: '{{ repo_mirror_base_path }}'
-    src: '{{ repo_mirror_landingpage_clone_dir }}/dist/'
-    remote_src: true
