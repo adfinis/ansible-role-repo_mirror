@@ -1,7 +1,7 @@
 ---
 
-- name: include os specific vars
-  include_vars: '{{ item }}'
+- name: Include os specific vars
+  ansible.builtin.include_tasks: '{{ item }}'
   with_first_found:
     - '{{ ansible_distribution }}_{{ ansible_distribution_major_version }}.yml'
     - '{{ ansible_os_family }}.yml'
@@ -10,14 +10,14 @@
     - 'role::repo_mirror:installation'
     - 'role::repo_mirror:configuration'
 
-- name: include installation tasks
-  include_tasks: installation.yml
+- name: Include installation tasks
+  ansible.builtin.include_tasks: installation.yml
   tags:
     - 'role::repo_mirror'
     - 'role::repo_mirror:installation'
 
-- name: include configuration tasks
-  include_tasks: configuration.yml
+- name: Include configuration tasks
+  ansible.builtin.include_tasks: configuration.yml
   tags:
     - 'role::repo_mirror'
     - 'role::repo_mirror:configuration'
