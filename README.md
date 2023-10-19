@@ -179,8 +179,9 @@ repo_mirror_repos: []
 
 ## Dependencies
 
-Please see the [meta/main.yml](https://github.com/adfinis/ansible-role-repo_mirror/blob/master/meta/main.yml) file for requirements for
-this role and the [molecule_requirements.yml](https://github.com/adfinis/ansible-role-repo_mirror/blob/master/molecule_requirements.yml) file for the
+The role requires the `master` version of this role: https://github.com/O1ahmad/ansible-role-systemd
+
+Please see the [molecule_requirements.yml](https://github.com/adfinis/ansible-role-repo_mirror/blob/master/molecule_requirements.yml) file for the
 molecule requirements.
 
 ## Example Playbook
