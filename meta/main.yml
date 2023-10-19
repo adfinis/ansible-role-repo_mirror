@@ -17,6 +17,7 @@ galaxy_info:
     - mirror
     - rsync
     - wget
+  github_branch: master
 
 collections:
   - ansible.posix
