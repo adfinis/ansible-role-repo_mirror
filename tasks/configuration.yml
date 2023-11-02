@@ -84,7 +84,7 @@
     apply:
       vars:
         unit_config:
-          - name: "sync_{{ item.name }}_mirror"
+          - name: "sync_{{ item.name | replace('-', '__') }}_mirror"
             type: service
             Unit:
               Description: "Systemd unit for mirror script of {{ item.name }}"
@@ -97,7 +97,7 @@
               RuntimeMaxSec: "{{ item.systemd_unit_max_runtime_sec | default(_default_systemd_unit_max_runtime_sec) }}"
             state: "{{ item.systemd_service_unit_state | default(_default_systemd_service_unit_state) }}"
 
-          - name: "sync_{{ item.name }}_mirror"
+          - name: "sync_{{ item.name | replace('-', '__') }}_mirror"
             type: timer
             Unit:
               Description: "Systemd timer unit for mirror script of {{ item.name }}"
