@@ -84,6 +84,11 @@
     group: www-data
     owner: www-data
     path: '{{ repo_mirror_landingpage_clone_dir }}/dist/'
+  when: not ansible_check_mode
+  tags:
+    - 'role::repo_mirror'
+    - 'role::repo_mirror:configuration'
+    - 'role::repo_mirror:configuration:landingpage'
 
 - name: Deploy landingpage
   ansible.builtin.copy:
