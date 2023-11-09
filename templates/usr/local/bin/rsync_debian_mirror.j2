@@ -54,11 +54,20 @@ function writetracefile() {
         fi
     done
 
-    echo "$(date -u)" >> ${base_path}/${trace}.new
-    echo "Used SySync v1" >> ${base_path}/${trace}.new
+    echo "$(LC_ALL=POSIX LANG=POSIX date -u)" >> ${base_path}/${trace}.new
+    echo "Date: $(LC_ALL=POSIX LANG=POSIX date -u -R)" >> ${base_path}/${trace}.new
+    echo "Software: SySync v1" >> ${base_path}/${trace}.new
     echo "Running on host: ${mirrorname}" >> ${base_path}/${trace}.new
+
     echo "Architectures: GUESSED:{${archlist}}" >> ${base_path}/${trace}.new
+    echo "Architectures-Configuration: $globalarchlist" >> ${base_path}/${trace}.new
+    echo "Throughput: 1Gb" >> ${base_path}/${trace}.new
     echo "Upstream-mirror: ${repo_source}" >> ${base_path}/${trace}.new
+
+    echo "Location: Bern/Bern/Switzerland/Europe" >> ${base_path}/${trace}.new
+    echo "Country: CH" >> ${base_path}/${trace}.new
+    echo "Maintainer: Adfinis AG" >> ${base_path}/${trace}.new
+    echo "${mirrorname}" >> ${base_path}/project/trace/_traces
 
     mv "${base_path}/${trace}.new" "${base_path}/${trace}"
 
