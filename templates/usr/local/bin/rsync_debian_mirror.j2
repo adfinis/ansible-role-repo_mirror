@@ -54,11 +54,22 @@ function writetracefile() {
         fi
     done
 
-    echo "$(date -u)" >> ${base_path}/${trace}.new
-    echo "Used SySync v1" >> ${base_path}/${trace}.new
-    echo "Running on host: ${mirrorname}" >> ${base_path}/${trace}.new
-    echo "Architectures: GUESSED:{${archlist}}" >> ${base_path}/${trace}.new
-    echo "Upstream-mirror: ${repo_source}" >> ${base_path}/${trace}.new
+	# let those tabs be tabs from here...
+	cat <<- EOF >> "$base_path/$trace.new"
+	$(LC_ALL=POSIX LANG=POSIX date -u)
+	Date: $(LC_ALL=POSIX LANG=POSIX date -u -R)
+	Software: SySync v1
+	Running on host: $mirrorname
+	Architectures: GUESSED:{$archlist}
+	Architectures-Configuration: $globalarchlist
+	Throughput: 1Gb
+	Upstream-mirror: $repo_source
+	Location: Bern/Bern/Switzerland/Europe
+	Country: CH
+	Maintainer: Adfinis AG
+	$mirrorname
+	EOF
+	# ....until here
 
     mv "${base_path}/${trace}.new" "${base_path}/${trace}"
 
