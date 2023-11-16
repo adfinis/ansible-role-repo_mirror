@@ -75,8 +75,8 @@ function writetracefile() {
 
     mv "${base_path}/${trace}.new" "${base_path}/${trace}"
 
-    if ! grep -q "pkg.adfinis.com" "${base_path}/project/trace/_traces"; then
-           echo "pkg.adfinis.com" >> "${base_path}/project/trace/_traces"
+    if ! grep -q "$mirrorname" "${base_path}/project/trace/_traces"; then
+           echo "$mirrorname" >> "${base_path}/project/trace/_traces"
     fi
 
 }
