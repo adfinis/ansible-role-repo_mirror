@@ -34,9 +34,8 @@ repo_mirror_packages:
 ```
 
 ```yaml
+# defaults/main.yml
 ---
-
-# defaults/Debian.yml
 
 # The default user mirrors will use
 repo_mirror_user: mirror
@@ -61,6 +60,9 @@ repo_mirror_bwlimit: 30MiB
 
 # The default rsync timeout in seconds
 repo_mirror_rsync_timeout: 30
+
+# The default directory to clone the landingpage repository to
+repo_mirror_landingpage_clone_dir: /opt/landingpage
 
 # the default max runtime for a sync job
 _default_systemd_unit_max_runtime_sec: 43200  # 12 hours
