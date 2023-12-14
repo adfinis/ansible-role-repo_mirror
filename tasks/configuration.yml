@@ -6,7 +6,7 @@
 - name: Populate service facts
   ansible.builtin.service_facts:
 
-- name: create zfs datasets
+- name: Create zfs datasets
   community.general.zfs:
     name: '{{ item.name }}'
     state: present
