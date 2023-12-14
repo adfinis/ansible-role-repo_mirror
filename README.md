@@ -28,6 +28,9 @@ repo_mirror_packages:
   - logrotate
   - git
   - systemd
+  - yarnpkg
+  - nodejs
+  - make
 ```
 
 ```yaml
