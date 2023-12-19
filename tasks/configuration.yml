@@ -11,7 +11,7 @@
     name: '{{ item.name }}'
     state: present
     extra_zfs_properties:
-      quota: '{{ item.quota }}'
+      quota: '{{ item.quota | human_to_bytes(default_unit="G") }}'
       mountpoint: '{{ repo_mirror_base_path }}/{{ (item.name | split("/"))[1] }}'
   with_items: "{{ repo_mirror_zfs_datasets }}"
   when: repo_mirror_zfs_datasets is defined and repo_mirror_zfs_managed is true
