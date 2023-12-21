@@ -4,6 +4,9 @@ repo_mirror_user: mirror
 # The default group mirrors will use
 repo_mirror_group: mirror
 
+# The mirror www path for html files
+repo_mirror_www_path: /var/www
+
 # The mirror base path
 repo_mirror_base_path: /var/www/mirror
 
