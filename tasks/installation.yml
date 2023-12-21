@@ -95,6 +95,8 @@
     dest: '{{ repo_mirror_www_path }}'
     src: '{{ repo_mirror_landingpage_clone_dir }}/dist/'
     mode: "0755"
+    group: www-data
+    owner: www-data
     remote_src: true
   when: not ansible_check_mode
   tags:
