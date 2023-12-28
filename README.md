@@ -43,6 +43,9 @@ repo_mirror_user: mirror
 # The default group mirrors will use
 repo_mirror_group: mirror
 
+# The mirror www path for html files
+repo_mirror_www_path: /var/www
+
 # The mirror base path
 repo_mirror_base_path: /var/www/mirror
 
@@ -63,6 +66,14 @@ repo_mirror_rsync_timeout: 30
 
 # The default directory to clone the landingpage repository to
 repo_mirror_landingpage_clone_dir: /opt/landingpage
+
+# if to manage/modify/touch zfs datasets, default false
+repo_mirror_zfs_managed: false
+
+# zfs datasets to manage, default set to none
+repo_mirror_zfs_datasets:
+  - name: "pkg/debian"
+    quota: "1000G"
 
 # the default max runtime for a sync job
 _default_systemd_unit_max_runtime_sec: 43200  # 12 hours
