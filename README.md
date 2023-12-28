@@ -18,8 +18,8 @@ Ansible role that helps deploying a package mirror
 ## Role Variables
 
 ```yaml
-# vars/Debian.yml
 ---
+# vars/Debian.yml
 
 # script dependencies to be installed
 repo_mirror_packages:
