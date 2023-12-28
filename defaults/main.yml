@@ -34,7 +34,6 @@ repo_mirror_zfs_managed: false
 # zfs datasets to manage, default set to none
 repo_mirror_zfs_datasets:
   - name: "pkg/debian"
-    quota: "1000G"
 
 # the default max runtime for a sync job
 _default_systemd_unit_max_runtime_sec: 43200  # 12 hours
