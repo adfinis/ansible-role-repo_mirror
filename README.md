@@ -34,8 +34,8 @@ repo_mirror_packages:
 ```
 
 ```yaml
-# defaults/main.yml
 ---
+# defaults/main.yml
 
 # The default user mirrors will use
 repo_mirror_user: mirror
