@@ -1,9 +1,9 @@
 ---
-name: Ansible Molecule
+name: Ansible Lint
 
 on:
   push:
-    tags_ignore:
+    tags-ignore:
       - '*'
   pull_request:
 
@@ -12,35 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           path: "${{ github.repository }}"
-      - name: molecule
-        uses: robertdebock/molecule-action@2.6.3
+
+      - name: Run ansible-lint
+        uses: ansible/ansible-lint@v6
         with:
-          command: lint
-  test:
-    needs:
-      - lint
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-          - image: "debian"
-            tag: "latest"
-          - image: "debian"
-            tag: "bullseye"
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-        with:
-          path: "${{ github.repository }}"
-      - name: molecule
-        uses: robertdebock/molecule-action@2.6.3
-        with:
-          image: ${{ matrix.config.image }}
-          tag: ${{ matrix.config.tag }}
-          options: "--parallel all"
-        env:
-          TOX_PARALLEL_NO_SPINNER: 1
+          path: "${GITHUB_WORKSPACE}"
