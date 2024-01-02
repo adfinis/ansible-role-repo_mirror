@@ -1,0 +1,22 @@
+---
+name: Ansible Lint
+
+on:
+  push:
+    tags-ignore:
+      - '*'
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          path: "${{ github.repository }}"
+
+      - name: Run ansible-lint
+        uses: ansible/ansible-lint@v6
+        with:
+          path: "${GITHUB_WORKSPACE}"
