@@ -11,7 +11,19 @@ log_file={{ repo_mirror_log_path | quote }}/$repo_name/repo_$repo_name.log
 status_file=$base_path.json
 owner={{ repo_mirror_user | quote }}
 
-repo_source={{ item.source_repo | quote }}
+repo_source="{{ item.source_repo }}"
+# compute exclude patterns
+exclude=""
+{% if item.excludes is defined %}
+exclude_pattern="{{ item.excludes | join(' ') | default("") }}"
+if [ -n "${exclude_pattern}" ]
+then
+    # Generate rsync exlude list
+    for excl in ${exclude_pattern}; do
+        exclude="${exclude} --exclude='${excl}'"
+    done
+fi
+{% endif %}
 
 datetime_format={{ repo_mirror_datetime_format | quote }}
 bwlimit={{ item.bwlimit | default(repo_mirror_bwlimit) | quote }}
@@ -76,10 +88,11 @@ fi
 
 # start to rsync the mirror
 log-message 0 "Started $repo_name mirror rsync job."
-rsync --verbose --log-file="${log}" --no-motd --human-readable --recursive \
+eval rsync --verbose --log-file="${log}" --no-motd --human-readable --recursive \
     --hard-links --links --safe-links --times --perms --chmod=u=rwX,go=rX \
     --delete-during --temp-dir="${tmp_path}" {% if item.rsync_excludes is defined %}{% for i in item.rsync_excludes %}--exclude "{{ i }}" {% endfor %}{% endif %} \
     --bwlimit="${bwlimit}" --timeout="${rsync_timeout}" --contimeout=60 \
+    "${exclude}" \
     "${repo_source}" \
     "${base_path}"
 rsyncexitcode="$?"
