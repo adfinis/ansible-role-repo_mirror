@@ -24,4 +24,5 @@ collections:
   - community.general
   - adfinis.facts
 
-dependencies: []
+dependencies:
+  - role: 0x0i.systemd
