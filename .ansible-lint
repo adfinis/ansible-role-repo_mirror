@@ -1,2 +1,6 @@
 skip_list:
   - '405'
+
+exclude_paths:
+  - tests/
+  - molecule/
