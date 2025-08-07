@@ -77,7 +77,7 @@ fi
 # start to rsync the mirror
 log-message 0 "Started $repo_name mirror rsync job."
 rsync --verbose --log-file="${log}" --no-motd --human-readable --recursive \
-    --hard-links --links --safe-links --times --perms --chmod=u=rwX,go=rX \
+    --hard-links --links --safe-links --times --perms{% if item.keepPermissions|default(false) != true %} --chmod=u=rwX,go=rX{% endif %} \
     --delete-during --temp-dir="${tmp_path}" {% if item.rsync_excludes is defined %}{% for i in item.rsync_excludes %}--exclude "{{ i }}" {% endfor %}{% endif %} \
     --bwlimit="${bwlimit}" --timeout="${rsync_timeout}" --contimeout=60 \
     "${repo_source}" \
