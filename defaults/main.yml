@@ -81,6 +81,7 @@ repo_mirror_repos: []
 #       systemd_timer_calendar: "*-*-* 0/2:23:00"
 #       systemd_timer_disabled: true # does not enable the timer (e.g. will not be started on boot), default false
 #       systemd_unit_max_runtime_sec: 600 # 10 minutes, default 43200
+#       keepPermissions: true # default false, when true skips --chmod=u=rwX,go=rX to preserve source permissions
 #
 #     - name: archlinux
 #       source_repo: rsync://mirror.23media.de/archlinux
