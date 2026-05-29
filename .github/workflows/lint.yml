@@ -4,14 +4,18 @@ name: Ansible Lint
 on:
   push:
     tags-ignore:
-      - '*'
+      - "*"
   pull_request:
+
+permissions: {}
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
       - name: Run ansible-lint
-        uses: ansible/ansible-lint@v25.7.0
+        uses: ansible/ansible-lint@5fac056c45595896c973fbde871f01f6cb14d74c # v26.4.0
